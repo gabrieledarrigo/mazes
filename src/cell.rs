@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-#[derive(PartialEq, Debug)]
-struct Cell<'a> {
+#[derive(PartialEq, Debug, Clone)]
+pub struct Cell<'a> {
     row: i32,
     column: i32,
     north: Option<&'a Cell<'a>>,
@@ -12,7 +12,7 @@ struct Cell<'a> {
 }
 
 impl<'a> Cell<'a> {
-    fn new(row: i32, column: i32) -> Self {
+    pub fn new(row: i32, column: i32) -> Self {
         let links = HashMap::new();
 
         Self {
@@ -26,11 +26,11 @@ impl<'a> Cell<'a> {
         }
     }
 
-    fn links(&self) -> &HashMap<(i32, i32), bool> {
+    pub fn links(&self) -> &HashMap<(i32, i32), bool> {
         &self.links
     }
 
-    fn link<'b>(&mut self, cell: &'b mut Cell<'a>, bidirectional: bool) {
+    pub fn link<'b>(&mut self, cell: &'b mut Cell<'a>, bidirectional: bool) {
         self.links.insert((cell.row, cell.column), true);
 
         if bidirectional {
@@ -38,7 +38,7 @@ impl<'a> Cell<'a> {
         }
     }
 
-    fn unlink(&mut self, cell: &'a mut Cell<'a>) {
+    pub fn unlink(&mut self, cell: &'a mut Cell<'a>) {
         self.links.remove(&(cell.row, cell.column));
 
         if let Some(_) = cell.links.get(&(self.row, self.column)) {
@@ -46,7 +46,7 @@ impl<'a> Cell<'a> {
         }
     }
 
-    fn neighbors(&self) -> Vec<&Cell<'_>> {
+    pub fn neighbors(&self) -> Vec<&Cell<'_>> {
         let mut list = vec![];
 
         if let Some(cell) = self.north {
@@ -68,19 +68,19 @@ impl<'a> Cell<'a> {
         list
     }
 
-    fn set_north(&mut self, north: Option<&'a Cell<'a>>) {
+    pub fn set_north(&mut self, north: Option<&'a Cell<'a>>) {
         self.north = north;
     }
 
-    fn set_south(&mut self, south: Option<&'a Cell<'a>>) {
+    pub fn set_south(&mut self, south: Option<&'a Cell<'a>>) {
         self.south = south;
     }
 
-    fn set_east(&mut self, east: Option<&'a Cell<'a>>) {
+    pub fn set_east(&mut self, east: Option<&'a Cell<'a>>) {
         self.east = east;
     }
 
-    fn set_west(&mut self, west: Option<&'a Cell<'a>>) {
+    pub fn set_west(&mut self, west: Option<&'a Cell<'a>>) {
         self.west = west;
     }
 }
