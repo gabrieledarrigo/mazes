@@ -2,6 +2,7 @@ use rand::Rng;
 
 use crate::cell::Cell;
 
+/// Represents a grid of cells.
 pub struct Grid {
     rows: i32,
     columns: i32,
@@ -9,6 +10,16 @@ pub struct Grid {
 }
 
 impl Grid {
+    /// Creates a new grid with the specified number of rows and columns.
+    ///
+    /// # Arguments
+    ///
+    /// * `rows` - The number of rows in the grid.
+    /// * `columns` - The number of columns in the grid.
+    ///
+    /// # Returns
+    ///
+    /// A new `Grid` instance.
     pub fn new(rows: i32, columns: i32) -> Self {
         let grid = Self::prepare_grid(rows, columns);
 
@@ -19,6 +30,16 @@ impl Grid {
         }
     }
 
+    /// Prepares the grid by initializing the cells and setting their neighbors.
+    ///
+    /// # Arguments
+    ///
+    /// * `rows` - The number of rows in the grid.
+    /// * `columns` - The number of columns in the grid.
+    ///
+    /// # Returns
+    ///
+    /// A vector of vectors representing the grid.
     fn prepare_grid(rows: i32, columns: i32) -> Vec<Vec<Cell>> {
         let mut grid = vec![vec![Cell::new(0, 0); columns as usize]; rows as usize];
 
@@ -49,6 +70,16 @@ impl Grid {
         grid
     }
 
+    /// Return the cell at the specified row and column.
+    ///
+    /// # Arguments
+    ///
+    /// * `row` - The row index of the cell.
+    /// * `column` - The column index of the cell.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the cell at the specified position.
     fn cell(&self, row: i32, column: i32) -> Option<&Cell> {
         if (row >= 0 && row < self.rows) == false || (column >= 0 && column < self.columns) == false
         {
@@ -58,6 +89,11 @@ impl Grid {
         Some(&self.grid[row as usize][column as usize])
     }
 
+    /// Return a random cell from the grid.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to a random cell from the grid.
     fn random_cell(&self) -> Option<&Cell> {
         let mut rng = rand::thread_rng();
         let row = rng.gen_range(0..self.rows);
@@ -104,7 +140,7 @@ mod tests {
     }
 
     #[test]
-    fn test_cell_valid() {
+    fn test_get_cell_valid() {
         let rows = 3;
         let columns = 3;
         let grid = Grid::new(rows, columns);
@@ -121,7 +157,7 @@ mod tests {
     }
 
     #[test]
-    fn test_cell_invalid() {
+    fn test_get_cell_invalid() {
         let rows = 3;
         let columns = 3;
         let grid = Grid::new(rows, columns);

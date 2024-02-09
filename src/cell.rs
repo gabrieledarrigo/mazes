@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+/// Represents a cell in a maze grid.
 #[derive(PartialEq, Debug, Clone)]
 pub struct Cell {
     row: i32,
@@ -12,6 +13,12 @@ pub struct Cell {
 }
 
 impl Cell {
+    /// Creates a new cell with the specified row and column.
+    ///
+    /// # Arguments
+    ///
+    /// * `row` - The row position in the grid
+    /// * `column` - The column position in the grid
     pub fn new(row: i32, column: i32) -> Self {
         let links = HashMap::new();
 
@@ -26,18 +33,27 @@ impl Cell {
         }
     }
 
+    /// Returns the row of the cell.
     pub fn row(&self) -> i32 {
         self.row
     }
 
+    /// Returns the column of the cell.
     pub fn column(&self) -> i32 {
         self.column
     }
 
+    /// Returns a reference to the links of the cell.
     pub fn links(&self) -> &HashMap<(i32, i32), bool> {
         &self.links
     }
 
+    /// Links the cell to another cell.
+    ///
+    /// # Arguments
+    ///
+    /// * `cell` - The cell to link to.
+    /// * `bidirectional` - Whether the link should be bidirectional.
     pub fn link(&mut self, cell: &mut Cell, bidirectional: bool) {
         self.links.insert((cell.row, cell.column), true);
 
@@ -46,6 +62,11 @@ impl Cell {
         }
     }
 
+    /// Unlinks the cell from another cell.
+    ///
+    /// # Arguments
+    ///
+    /// * `cell` - The cell to unlink from.
     pub fn unlink(&mut self, cell: &mut Cell) {
         self.links.remove(&(cell.row, cell.column));
 
@@ -54,6 +75,7 @@ impl Cell {
         }
     }
 
+    /// Returns the neighboring cells of the cell.
     pub fn neighbors(&self) -> Vec<(i32, i32)> {
         let mut list = vec![];
 
@@ -76,34 +98,58 @@ impl Cell {
         list
     }
 
+    /// Returns the north neighbor of the cell.
     pub fn north(&self) -> Option<(i32, i32)> {
         self.north
     }
 
+    /// Sets the north neighbor of the cell.
+    ///
+    /// # Arguments
+    ///
+    /// * `north` - The north neighbor of the cell.
     pub fn set_north(&mut self, north: Option<(i32, i32)>) {
         self.north = north;
     }
 
+    /// Returns the south neighbor of the cell.
     pub fn south(&self) -> Option<(i32, i32)> {
         self.south
     }
 
+    /// Sets the south neighbor of the cell.
+    ///
+    /// # Arguments
+    ///
+    /// * `south` - The south neighbor of the cell.
     pub fn set_south(&mut self, south: Option<(i32, i32)>) {
         self.south = south;
     }
 
+    /// Returns the east neighbor of the cell.
     pub fn east(&self) -> Option<(i32, i32)> {
         self.east
     }
 
+    /// Sets the east neighbor of the cell.
+    ///
+    /// # Arguments
+    ///
+    /// * `east` - The east neighbor of the cell.
     pub fn set_east(&mut self, east: Option<(i32, i32)>) {
         self.east = east;
     }
 
+    /// Returns the west neighbor of the cell.
     pub fn west(&self) -> Option<(i32, i32)> {
         self.west
     }
 
+    /// Sets the west neighbor of the cell.
+    ///
+    /// # Arguments
+    ///
+    /// * `west` - The west neighbor of the cell.
     pub fn set_west(&mut self, west: Option<(i32, i32)>) {
         self.west = west;
     }
