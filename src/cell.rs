@@ -1,17 +1,17 @@
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Clone)]
-pub struct Cell<'a> {
+pub struct Cell {
     row: i32,
     column: i32,
-    north: Option<&'a Cell<'a>>,
-    south: Option<&'a Cell<'a>>,
-    east: Option<&'a Cell<'a>>,
-    west: Option<&'a Cell<'a>>,
+    north: Option<(i32, i32)>,
+    south: Option<(i32, i32)>,
+    west: Option<(i32, i32)>,
+    east: Option<(i32, i32)>,
     links: HashMap<(i32, i32), bool>,
 }
 
-impl<'a> Cell<'a> {
+impl Cell {
     pub fn new(row: i32, column: i32) -> Self {
         let links = HashMap::new();
 
@@ -30,7 +30,7 @@ impl<'a> Cell<'a> {
         &self.links
     }
 
-    pub fn link<'b>(&mut self, cell: &'b mut Cell<'a>, bidirectional: bool) {
+    pub fn link(&mut self, cell: &mut Cell, bidirectional: bool) {
         self.links.insert((cell.row, cell.column), true);
 
         if bidirectional {
@@ -38,7 +38,7 @@ impl<'a> Cell<'a> {
         }
     }
 
-    pub fn unlink(&mut self, cell: &'a mut Cell<'a>) {
+    pub fn unlink(&mut self, cell: &mut Cell) {
         self.links.remove(&(cell.row, cell.column));
 
         if let Some(_) = cell.links.get(&(self.row, self.column)) {
@@ -46,7 +46,7 @@ impl<'a> Cell<'a> {
         }
     }
 
-    pub fn neighbors(&self) -> Vec<&Cell<'_>> {
+    pub fn neighbors(&self) -> Vec<(i32, i32)> {
         let mut list = vec![];
 
         if let Some(cell) = self.north {
@@ -68,19 +68,35 @@ impl<'a> Cell<'a> {
         list
     }
 
-    pub fn set_north(&mut self, north: Option<&'a Cell<'a>>) {
+    pub fn north(&self) -> Option<(i32, i32)> {
+        self.north
+    }
+
+    pub fn set_north(&mut self, north: Option<(i32, i32)>) {
         self.north = north;
     }
 
-    pub fn set_south(&mut self, south: Option<&'a Cell<'a>>) {
+    pub fn south(&self) -> Option<(i32, i32)> {
+        self.south
+    }
+
+    pub fn set_south(&mut self, south: Option<(i32, i32)>) {
         self.south = south;
     }
 
-    pub fn set_east(&mut self, east: Option<&'a Cell<'a>>) {
+    pub fn east(&self) -> Option<(i32, i32)> {
+        self.east
+    }
+
+    pub fn set_east(&mut self, east: Option<(i32, i32)>) {
         self.east = east;
     }
 
-    pub fn set_west(&mut self, west: Option<&'a Cell<'a>>) {
+    pub fn west(&self) -> Option<(i32, i32)> {
+        self.west
+    }
+
+    pub fn set_west(&mut self, west: Option<(i32, i32)>) {
         self.west = west;
     }
 }
@@ -138,16 +154,16 @@ mod tests {
     #[test]
     fn test_neighbors() {
         let mut cell = Cell::new(1, 1);
-        let north = Cell::new(0, 1);
-        let south = Cell::new(2, 1);
-        let east = Cell::new(2, 2);
-        let west = Cell::new(1, 0);
+        let north = (0, 1);
+        let south = (2, 1);
+        let east = (2, 2);
+        let west = (1, 0);
 
-        cell.set_north(Some(&north));
-        cell.set_south(Some(&south));
-        cell.set_east(Some(&east));
-        cell.set_west(Some(&west));
+        cell.set_north(Some(north));
+        cell.set_south(Some(south));
+        cell.set_east(Some(east));
+        cell.set_west(Some(west));
 
-        assert_eq!(cell.neighbors(), vec![&north, &south, &east, &west]);
+        assert_eq!(cell.neighbors(), vec![north, south, east, west]);
     }
 }
