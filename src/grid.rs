@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::cell::Cell;
 
 pub struct Grid {
@@ -46,6 +48,23 @@ impl Grid {
 
         grid
     }
+
+    fn cell(&self, row: i32, column: i32) -> Option<&Cell> {
+        if (row >= 0 && row < self.rows) == false || (column >= 0 && column < self.columns) == false
+        {
+            return None;
+        }
+
+        Some(&self.grid[row as usize][column as usize])
+    }
+
+    fn random_cell(&self) -> Option<&Cell> {
+        let mut rng = rand::thread_rng();
+        let row = rng.gen_range(0..self.rows);
+        let column = rng.gen_range(0..self.columns);
+
+        self.cell(row, column)
+    }
 }
 
 #[cfg(test)]
@@ -82,5 +101,36 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn test_cell_valid() {
+        let rows = 3;
+        let columns = 3;
+        let grid = Grid::new(rows, columns);
+
+        for row in 0..rows {
+            for column in 0..columns {
+                let cell = grid.cell(row, column);
+
+                assert!(cell.is_some());
+                assert_eq!(cell.unwrap().row(), row);
+                assert_eq!(cell.unwrap().column(), column);
+            }
+        }
+    }
+
+    #[test]
+    fn test_cell_invalid() {
+        let rows = 3;
+        let columns = 3;
+        let grid = Grid::new(rows, columns);
+
+        let invalid_row = -1;
+        let invalid_column = columns + 1;
+
+        let invalid_cell = grid.cell(invalid_row, invalid_column);
+
+        assert!(invalid_cell.is_none());
     }
 }

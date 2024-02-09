@@ -26,6 +26,14 @@ impl Cell {
         }
     }
 
+    pub fn row(&self) -> i32 {
+        self.row
+    }
+
+    pub fn column(&self) -> i32 {
+        self.column
+    }
+
     pub fn links(&self) -> &HashMap<(i32, i32), bool> {
         &self.links
     }
