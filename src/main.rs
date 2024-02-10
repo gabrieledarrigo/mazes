@@ -1,6 +1,11 @@
+mod binary_tree;
 mod cell;
 mod grid;
 
+use binary_tree::BinaryTree;
+use grid::Grid;
+
 fn main() {
-    println!("Hello, world!");
+    let mut grid = Grid::new(3, 3);
+    BinaryTree::on(&mut grid);
 }

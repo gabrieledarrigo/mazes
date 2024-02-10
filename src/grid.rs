@@ -5,6 +5,7 @@ use rand::Rng;
 use crate::cell::Cell;
 
 /// Represents a grid of cells.
+#[derive(Debug, Clone)]
 pub struct Grid {
     rows: i32,
     columns: i32,
@@ -112,6 +113,15 @@ impl Grid {
     pub fn iter(&self) -> GridIterator {
         GridIterator::new(self.cells.iter().flatten())
     }
+
+    /// Return a struct to iterate the cells mutably.
+    ///
+    /// # Returns
+    ///
+    /// A GridMutIterator struct
+    pub fn iter_mut(&mut self) -> GridMutIterator {
+        GridMutIterator::new(self.cells.iter_mut().flatten())
+    }
 }
 
 /// Represents an iterator over the cells in a grid.
@@ -142,6 +152,24 @@ impl<'a> Iterator for GridIterator<'a> {
     /// # Returns
     ///
     /// An optional reference to the next cell in the grid.
+    fn next(&mut self) -> Option<Self::Item> {
+        self.cells.next()
+    }
+}
+
+pub struct GridMutIterator<'a> {
+    cells: std::iter::Flatten<std::slice::IterMut<'a, Vec<Cell>>>,
+}
+
+impl<'a> GridMutIterator<'a> {
+    pub fn new(cells: std::iter::Flatten<std::slice::IterMut<'a, Vec<Cell>>>) -> Self {
+        Self { cells }
+    }
+}
+
+impl<'a> Iterator for GridMutIterator<'a> {
+    type Item = &'a mut Cell;
+
     fn next(&mut self) -> Option<Self::Item> {
         self.cells.next()
     }
