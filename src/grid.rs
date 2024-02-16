@@ -1,15 +1,16 @@
-use std::{iter::Flatten, slice::Iter};
-
 use rand::Rng;
+use std::{cell::RefCell, fmt::Display, rc::Rc};
 
 use crate::cell::Cell;
+
+type GridCell = Rc<RefCell<Cell>>;
 
 /// Represents a grid of cells.
 #[derive(Debug, Clone)]
 pub struct Grid {
     rows: i32,
     columns: i32,
-    cells: Vec<Vec<Cell>>,
+    cells: Vec<Vec<GridCell>>,
 }
 
 impl Grid {
@@ -43,12 +44,18 @@ impl Grid {
     /// # Returns
     ///
     /// A vector of vectors representing the grid.
-    fn prepare_grid(rows: i32, columns: i32) -> Vec<Vec<Cell>> {
-        let mut cells = vec![vec![Cell::new(0, 0); columns as usize]; rows as usize];
+    fn prepare_grid(rows: i32, columns: i32) -> Vec<Vec<GridCell>> {
+        let mut cells = vec![vec![Self::new_grid_cell(0, 0); columns as usize]; rows as usize];
 
         for row in 0..rows {
             for column in 0..columns {
-                let mut cell = Cell::new(row, column);
+                cells[row as usize][column as usize] = Self::new_grid_cell(row, column)
+            }
+        }
+
+        for row in 0..rows {
+            for column in 0..columns {
+                let cell = &mut cells[row as usize][column as usize].borrow_mut();
 
                 if row > 0 {
                     cell.set_north(Some((row - 1, column)));
@@ -65,12 +72,24 @@ impl Grid {
                 if column < columns - 1 {
                     cell.set_east(Some((row, column + 1)));
                 }
-
-                cells[row as usize][column as usize] = cell;
             }
         }
 
         cells
+    }
+
+    /// Returns a new grid cell at the specified row and column.
+    ///
+    /// # Arguments
+    ///
+    /// * `row` - The row index of the cell.
+    /// * `column` - The column index of the cell.
+    ///
+    /// # Returns
+    ///
+    /// A new grid cell.
+    fn new_grid_cell(row: i32, column: i32) -> GridCell {
+        Rc::new(RefCell::new(Cell::new(row, column)))
     }
 
     /// Return the cell at the specified row and column.
@@ -83,7 +102,7 @@ impl Grid {
     /// # Returns
     ///
     /// An optional reference to the cell at the specified position.
-    pub fn cell(&self, row: i32, column: i32) -> Option<&Cell> {
+    pub fn cell(&self, row: i32, column: i32) -> Option<&GridCell> {
         if (row >= 0 && row < self.rows) == false || (column >= 0 && column < self.columns) == false
         {
             return None;
@@ -97,7 +116,7 @@ impl Grid {
     /// # Returns
     ///
     /// An optional reference to a random cell from the grid.
-    pub fn random_cell(&self) -> Option<&Cell> {
+    pub fn random_cell(&self) -> Option<&GridCell> {
         let mut rng = rand::thread_rng();
         let row = rng.gen_range(0..self.rows);
         let column = rng.gen_range(0..self.columns);
@@ -105,70 +124,76 @@ impl Grid {
         self.cell(row, column)
     }
 
-    /// Return a struct to iterate the cells.
-    ///
-    /// # Returns
-    ///
-    /// A GridIterator struct
-    pub fn iter(&self) -> GridIterator {
-        GridIterator::new(self.cells.iter().flatten())
-    }
-
     /// Return a struct to iterate the cells mutably.
     ///
     /// # Returns
     ///
     /// A GridMutIterator struct
-    pub fn iter_mut(&mut self) -> GridMutIterator {
-        GridMutIterator::new(self.cells.iter_mut().flatten())
+    pub fn iter(&self) -> GridIterator {
+        GridIterator::new(self.cells.iter().flatten())
     }
 }
 
-/// Represents an iterator over the cells in a grid.
+impl Display for Grid {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut output = String::from("+");
+        output.push_str(&"---+".repeat(self.columns as usize));
+        output.push_str(&"\n");
+
+        for row in 0..self.rows {
+            let mut top = String::from("|");
+            let mut bottom = String::from("+");
+
+            for column in 0..self.columns {
+                let body = String::from("   ");
+                let mut east_boundary = String::from("|");
+                let mut south_boundary = String::from("---");
+                let corner = String::from("+");
+
+                if let Some(cell) = self.cell(row, column) {
+                    let cell = cell.borrow();
+                    let east = cell.east().unwrap_or((-1, -1));
+                    let south = cell.south().unwrap_or((-1, -1));
+
+                    if cell.links().contains_key(&east) {
+                        east_boundary = String::from(" ");
+                    }
+
+                    if cell.links().contains_key(&south) {
+                        south_boundary = String::from("   ");
+                    }
+                }
+
+                top.push_str(&body);
+                top.push_str(&east_boundary);
+
+                bottom.push_str(&south_boundary);
+                bottom.push_str(&corner);
+            }
+
+            top.push('\n');
+            bottom.push('\n');
+
+            output.push_str(&top);
+            output.push_str(&bottom);
+        }
+
+        write!(f, "{}", output)
+    }
+}
+
 pub struct GridIterator<'a> {
-    cells: Flatten<Iter<'a, Vec<Cell>>>,
+    cells: std::iter::Flatten<std::slice::Iter<'a, Vec<GridCell>>>,
 }
 
 impl<'a> GridIterator<'a> {
-    /// Creates a new `GridIterator` instance.
-    ///
-    /// # Arguments
-    ///
-    /// * `cells` - The iterator over the cells in the grid.
-    ///
-    /// # Returns
-    ///
-    /// A new `GridIterator` instance.
-    pub fn new(cells: Flatten<Iter<'a, Vec<Cell>>>) -> Self {
+    pub fn new(cells: std::iter::Flatten<std::slice::Iter<'a, Vec<GridCell>>>) -> Self {
         Self { cells }
     }
 }
 
 impl<'a> Iterator for GridIterator<'a> {
-    type Item = &'a Cell;
-
-    /// Advances the iterator and returns the next cell in the grid.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the next cell in the grid.
-    fn next(&mut self) -> Option<Self::Item> {
-        self.cells.next()
-    }
-}
-
-pub struct GridMutIterator<'a> {
-    cells: std::iter::Flatten<std::slice::IterMut<'a, Vec<Cell>>>,
-}
-
-impl<'a> GridMutIterator<'a> {
-    pub fn new(cells: std::iter::Flatten<std::slice::IterMut<'a, Vec<Cell>>>) -> Self {
-        Self { cells }
-    }
-}
-
-impl<'a> Iterator for GridMutIterator<'a> {
-    type Item = &'a mut Cell;
+    type Item = &'a GridCell;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.cells.next()
@@ -190,7 +215,7 @@ mod tests {
 
         for row in 0..rows {
             for column in 0..columns {
-                let cell = &grid.cells[row as usize][column as usize];
+                let cell = &grid.cells[row as usize][column as usize].borrow();
 
                 if row > 0 {
                     assert_eq!(cell.north(), Some((row - 1, column)));
@@ -219,11 +244,10 @@ mod tests {
 
         for row in 0..rows {
             for column in 0..columns {
-                let cell = grid.cell(row, column);
+                let cell = grid.cell(row, column).unwrap().borrow();
 
-                assert!(cell.is_some());
-                assert_eq!(cell.unwrap().row(), row);
-                assert_eq!(cell.unwrap().column(), column);
+                assert_eq!(cell.row(), row);
+                assert_eq!(cell.column(), column);
             }
         }
     }
@@ -243,7 +267,7 @@ mod tests {
     }
 
     #[test]
-    fn test_iter() {
+    fn test_iter_mut() {
         let rows = 3;
         let columns = 3;
         let grid = Grid::new(rows, columns);
@@ -252,11 +276,10 @@ mod tests {
 
         for row in 0..rows {
             for column in 0..columns {
-                let cell = iter.next();
+                let cell = iter.next().unwrap().borrow();
 
-                assert!(cell.is_some());
-                assert_eq!(cell.unwrap().row(), row);
-                assert_eq!(cell.unwrap().column(), column);
+                assert_eq!(cell.row(), row);
+                assert_eq!(cell.column(), column);
             }
         }
 
