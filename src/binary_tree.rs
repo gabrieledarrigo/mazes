@@ -1,10 +1,46 @@
-use crate::grid::Grid;
 use rand::Rng;
 
-#[derive(Debug)]
+use crate::grid::Grid;
+
+/// Implements the binary tree algorithm for generating mazes.
+///
+/// The binary tree algorithm works by iterating over each cell in the grid and randomly
+/// linking it to either its north or east neighbor. This creates a maze with a bias towards
+/// paths that go either north or east.
+///
+/// # Examples
+///
+/// ```
+/// use mazes::grid::Grid;
+/// use mazes::binary_tree::BinaryTree;
+///
+/// let mut grid = Grid::new(5, 5);
+/// BinaryTree::on(&mut grid);
+/// ```
+///
+/// In this example, a 5x5 grid is created and the binary tree algorithm is applied to it,
+/// generating a maze with a bias towards paths that go either north or east.
 pub struct BinaryTree {}
 
 impl BinaryTree {
+    /// Applies the binary tree algorithm to the given grid.
+    ///
+    /// # Arguments
+    ///
+    /// * `grid` - A mutable reference to the grid on which to apply the algorithm.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use mazes::grid::Grid;
+    /// use mazes::binary_tree::BinaryTree;
+    ///
+    /// let mut grid = Grid::new(5, 5);
+    /// BinaryTree::on(&mut grid);
+    /// ```
+    ///
+    /// In this example, a 5x5 grid is created and the binary tree algorithm is applied to it,
+    /// generating a maze with a bias towards paths that go either north or east.
     pub fn on(grid: &mut Grid) {
         let mut rng = rand::thread_rng();
 
@@ -18,14 +54,6 @@ impl BinaryTree {
 
             if let Some(east) = cell.east() {
                 neighbors.push(east);
-            }
-
-            if let Some(south) = cell.south() {
-                neighbors.push(south);
-            }
-
-            if let Some(west) = cell.west() {
-                neighbors.push(west);
             }
 
             if neighbors.is_empty() {
@@ -43,19 +71,34 @@ impl BinaryTree {
 
 #[cfg(test)]
 mod tests {
+    use crate::grid::Grid;
+
     use super::*;
 
     #[test]
     fn test_binary_tree_on() {
         let mut grid = Grid::new(3, 3);
+
         BinaryTree::on(&mut grid);
 
-        // Verify that each cell is linked to one of its neighbors
+        // Verify that each cell is linked to either its north or east neighbor
         for cell in grid.iter() {
             let cell = cell.borrow();
-            let neighbors = cell.neighbors();
+            let links = cell.links();
 
-            assert!(!neighbors.is_empty());
+            if cell.north().is_some() {
+                assert!(
+                    links.contains_key(&(cell.row() - 1, cell.column()))
+                        || links.contains_key(&(cell.row(), cell.column() + 1))
+                );
+            }
+
+            if cell.east().is_some() {
+                assert!(
+                    links.contains_key(&(cell.row() - 1, cell.column()))
+                        || links.contains_key(&(cell.row(), cell.column() + 1))
+                );
+            }
         }
     }
 }
