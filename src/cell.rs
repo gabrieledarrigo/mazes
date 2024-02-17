@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::grid::GridCell;
+
 #[derive(PartialEq, Debug, Clone)]
 pub struct Cell {
     row: i32,
@@ -38,12 +40,21 @@ impl Cell {
         &self.links
     }
 
-    pub fn link(&mut self, other: (i32, i32)) {
-        self.links.insert(other, true);
+    pub fn link(&mut self, other: GridCell) {
+        let (row, column) = (other.borrow().row(), other.borrow().column());
+
+        self.links.insert((row, column), true);
+
+        other
+            .borrow_mut()
+            .links
+            .insert((self.row, self.column), true);
     }
 
-    pub fn unlink(&mut self, other: (i32, i32)) {
-        self.links.remove(&other);
+    pub fn unlink(&mut self, other: GridCell) {
+        let (row, column) = (other.borrow().row, other.borrow().column);
+
+        self.links.remove(&(row, column));
     }
 
     pub fn neighbors(&self) -> Vec<(i32, i32)> {
@@ -57,11 +68,11 @@ impl Cell {
             list.push(cell);
         }
 
-        if let Some(cell) = self.east {
+        if let Some(cell) = self.west {
             list.push(cell);
         }
 
-        if let Some(cell) = self.west {
+        if let Some(cell) = self.east {
             list.push(cell);
         }
 
@@ -84,14 +95,6 @@ impl Cell {
         self.south = south;
     }
 
-    pub fn east(&self) -> Option<(i32, i32)> {
-        self.east
-    }
-
-    pub fn set_east(&mut self, east: Option<(i32, i32)>) {
-        self.east = east;
-    }
-
     pub fn west(&self) -> Option<(i32, i32)> {
         self.west
     }
@@ -99,10 +102,20 @@ impl Cell {
     pub fn set_west(&mut self, west: Option<(i32, i32)>) {
         self.west = west;
     }
+
+    pub fn east(&self) -> Option<(i32, i32)> {
+        self.east
+    }
+
+    pub fn set_east(&mut self, east: Option<(i32, i32)>) {
+        self.east = east;
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::grid::Grid;
+
     use super::*;
 
     #[test]
@@ -117,28 +130,28 @@ mod tests {
     #[test]
     fn test_link_cells() {
         let mut cell1: Cell = Cell::new(0, 0);
-        let cell2 = (1, 1);
+        let cell2 = Grid::new_grid_cell(1, 1);
 
         cell1.link(cell2);
 
-        assert_eq!(cell1.links.get(&cell2), Some(&true));
+        assert_eq!(cell1.links.get(&(1, 1)), Some(&true));
     }
 
     #[test]
     fn test_unlink() {
         let mut cell1 = Cell::new(0, 0);
-        let cell2 = (1, 1);
+        let cell2 = Grid::new_grid_cell(1, 1);
 
-        cell1.link(cell2);
+        cell1.link(cell2.clone());
         cell1.unlink(cell2);
 
-        assert_eq!(cell1.links().get(&cell2), None);
+        assert_eq!(cell1.links.get(&(1, 1)), None);
     }
 
     #[test]
     fn test_links() {
         let mut cell1 = Cell::new(0, 0);
-        let cell2 = (1, 1);
+        let cell2 = Grid::new_grid_cell(1, 1);
 
         cell1.link(cell2);
 
@@ -150,14 +163,14 @@ mod tests {
         let mut cell = Cell::new(1, 1);
         let north = (0, 1);
         let south = (2, 1);
-        let east = (2, 2);
         let west = (1, 0);
+        let east = (2, 2);
 
         cell.set_north(Some(north));
         cell.set_south(Some(south));
-        cell.set_east(Some(east));
         cell.set_west(Some(west));
+        cell.set_east(Some(east));
 
-        assert_eq!(cell.neighbors(), vec![north, south, east, west]);
+        assert_eq!(cell.neighbors(), vec![north, south, west, east]);
     }
 }

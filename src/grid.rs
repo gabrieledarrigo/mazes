@@ -3,7 +3,7 @@ use std::{cell::RefCell, fmt::Display, rc::Rc};
 
 use crate::cell::Cell;
 
-type GridCell = Rc<RefCell<Cell>>;
+pub type GridCell = Rc<RefCell<Cell>>;
 
 /// Represents a grid of cells.
 #[derive(Debug, Clone)]
@@ -88,7 +88,7 @@ impl Grid {
     /// # Returns
     ///
     /// A new grid cell.
-    fn new_grid_cell(row: i32, column: i32) -> GridCell {
+    pub fn new_grid_cell(row: i32, column: i32) -> GridCell {
         Rc::new(RefCell::new(Cell::new(row, column)))
     }
 
