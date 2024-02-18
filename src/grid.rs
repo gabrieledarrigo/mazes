@@ -1,5 +1,5 @@
 use rand::Rng;
-use std::{cell::RefCell, fmt::Display, rc::Rc};
+use std::{cell::RefCell, fmt::Display, iter::Flatten, rc::Rc, slice::Iter};
 
 use crate::cell::Cell;
 
@@ -132,6 +132,15 @@ impl Grid {
     pub fn iter(&self) -> GridIterator {
         GridIterator::new(self.cells.iter().flatten())
     }
+
+    /// Return an iterator over the rows of the grid.
+    ///
+    /// # Returns
+    ///
+    /// An iterator over the rows of the grid.
+    pub fn each_row(&self) -> Iter<'_, Vec<GridCell>> {
+        self.cells.iter()
+    }
 }
 
 impl Display for Grid {
@@ -182,12 +191,18 @@ impl Display for Grid {
     }
 }
 
+/// An iterator over the cells of a grid.
 pub struct GridIterator<'a> {
-    cells: std::iter::Flatten<std::slice::Iter<'a, Vec<GridCell>>>,
+    cells: Flatten<Iter<'a, Vec<GridCell>>>,
 }
 
 impl<'a> GridIterator<'a> {
-    pub fn new(cells: std::iter::Flatten<std::slice::Iter<'a, Vec<GridCell>>>) -> Self {
+    /// Creates a new grid iterator.
+    ///
+    /// # Arguments
+    ///
+    /// * `cells` - An iterator over the cells of the grid.
+    pub fn new(cells: Flatten<Iter<'a, Vec<GridCell>>>) -> Self {
         Self { cells }
     }
 }
@@ -195,6 +210,11 @@ impl<'a> GridIterator<'a> {
 impl<'a> Iterator for GridIterator<'a> {
     type Item = &'a GridCell;
 
+    /// Returns the next cell in the grid.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the next cell in the grid.
     fn next(&mut self) -> Option<Self::Item> {
         self.cells.next()
     }
