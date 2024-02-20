@@ -29,8 +29,6 @@ impl Sidewinder {
                         let north = grid.cell(northern_row, norther_column).unwrap().to_owned();
                         member.link(north);
                     }
-
-                    run.clear(); // Clear the run after closing it
                 } else {
                     let mut cell = cell.borrow_mut();
 

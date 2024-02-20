@@ -1,12 +1,9 @@
-mod binary_tree;
+mod algorithms;
 mod cell;
 mod grid;
-mod sidewinder;
 
-use binary_tree::BinaryTree;
+use algorithms::{binary_tree::*, sidewinder::*};
 use grid::Grid;
-
-use crate::sidewinder::Sidewinder;
 
 fn main() {
     let mut grid = Grid::new(3, 3);
