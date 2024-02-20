@@ -1,4 +1,4 @@
-use crate::grid::Grid;
+use crate::grids::grid::Grid;
 use rand::Rng;
 
 pub struct Sidewinder {}

@@ -1,6 +1,5 @@
+use super::grid::GridCell;
 use std::collections::HashMap;
-
-use crate::grid::GridCell;
 
 /// Represents a cell in a maze grid.
 #[derive(PartialEq, Debug, Clone)]
@@ -179,9 +178,8 @@ impl Cell {
 
 #[cfg(test)]
 mod tests {
-    use crate::grid::Grid;
-
     use super::*;
+    use crate::grids::grid::Grid;
 
     #[test]
     fn test_new_cell() {

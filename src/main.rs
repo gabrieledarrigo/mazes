@@ -1,9 +1,8 @@
 mod algorithms;
-mod cell;
-mod grid;
+mod grids;
 
 use algorithms::{binary_tree::*, sidewinder::*};
-use grid::Grid;
+use grids::grid::Grid;
 
 fn main() {
     let mut grid = Grid::new(3, 3);

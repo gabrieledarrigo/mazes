@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::grid::Grid;
+use crate::grids::grid::Grid;
 
 /// Implements the binary tree algorithm for generating mazes.
 ///
@@ -71,8 +71,6 @@ impl BinaryTree {
 
 #[cfg(test)]
 mod tests {
-    use crate::grid::Grid;
-
     use super::*;
 
     #[test]

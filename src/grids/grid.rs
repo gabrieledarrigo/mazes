@@ -1,7 +1,6 @@
+use super::cell::Cell;
 use rand::Rng;
 use std::{cell::RefCell, fmt::Display, iter::Flatten, rc::Rc, slice::Iter};
-
-use crate::cell::Cell;
 
 pub type GridCell = Rc<RefCell<Cell>>;
 
