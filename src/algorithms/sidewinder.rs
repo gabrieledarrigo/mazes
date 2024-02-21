@@ -1,6 +1,23 @@
 use crate::grids::grid::Grid;
 use rand::Rng;
 
+/// Implements the Sidewinder algorithm for generating mazes.
+///
+/// The Sidewinder algorithm is a simple algorithm for generating mazes. It works by iterating over each row of cells in the grid, and for each cell, it either links it to the cell to the east or the cell to the north, creating passages in the maze. The decision of which cell to link is based on a random number generator.
+///
+/// # Arguments
+///
+/// * `grid` - A mutable reference to the grid on which the algorithm will be applied.
+///
+/// # Example
+///
+/// ```
+/// use mazes::algorithms::Sidewinder;
+/// use mazes::grid::Grid;
+///
+/// let mut grid = Grid::new(10, 10);
+/// Sidewinder::on(&mut grid);
+/// ```
 pub struct Sidewinder {}
 
 impl Sidewinder {
