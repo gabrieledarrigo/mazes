@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::grid::{Grid, GridCell};
+use super::base_grid::{BaseGrid, GridCell};
 
 /// Represents a collection of distances from a root cell to other cells in a grid.
 #[derive(Debug)]
@@ -58,7 +58,7 @@ impl Distances {
         self.cells.keys().collect()
     }
 
-    pub fn calculate(&mut self, root: GridCell, grid: Grid) {
+    pub fn calculate(&mut self, root: GridCell, grid: &impl BaseGrid) {
         let mut frontier = vec![root];
 
         while !frontier.is_empty() {
@@ -92,6 +92,7 @@ impl Distances {
 mod tests {
     use super::super::grid::Grid;
     use super::Distances;
+    use crate::grids::base_grid::BaseGrid;
     use crate::BinaryTree;
     use std::collections::HashMap;
 
@@ -132,7 +133,7 @@ mod tests {
 
         let root = grid.cell(0, 0).unwrap();
         let mut distances = Distances::new((0, 0));
-        distances.calculate(root.to_owned(), grid.clone());
+        distances.calculate(root.to_owned(), &grid);
 
         // Verify the distances for specific cells
         assert_eq!(*distances.get((0, 0)).unwrap(), 0);

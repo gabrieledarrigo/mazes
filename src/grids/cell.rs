@@ -1,5 +1,6 @@
-use super::grid::GridCell;
 use std::collections::HashMap;
+
+use super::base_grid::GridCell;
 
 /// Represents a cell in a maze grid.
 #[derive(PartialEq, Debug, Clone)]

@@ -1,4 +1,4 @@
-use crate::grids::grid::Grid;
+use crate::grids::{base_grid::BaseGrid, grid::Grid};
 use rand::Rng;
 
 /// Implements the Sidewinder algorithm for generating mazes.
@@ -21,7 +21,7 @@ use rand::Rng;
 pub struct Sidewinder {}
 
 impl Sidewinder {
-    pub fn on(grid: &mut Grid) {
+    pub fn on(grid: &mut impl BaseGrid) {
         let mut rng = rand::thread_rng();
 
         for row in grid.each_row() {

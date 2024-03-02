@@ -1,12 +1,19 @@
-use super::cell::Cell;
+use super::{
+    base_grid::{BaseGrid, GridCell, GridIterator},
+    cell::Cell,
+};
 use rand::Rng;
-use std::{cell::RefCell, fmt::Display, iter::Flatten, rc::Rc, slice::Iter};
-
-pub type GridCell = Rc<RefCell<Cell>>;
+use std::{cell::RefCell, fmt::Display, rc::Rc, slice::Iter};
 
 pub struct GridDisplay<'a> {
     grid: &'a Grid,
-    cell_content: String,
+    cell_content: fn() -> String,
+}
+
+impl<'a> GridDisplay<'a> {
+    pub fn new(grid: &'a Grid, cell_content: fn() -> String) -> Self {
+        Self { grid, cell_content }
+    }
 }
 
 impl<'a> Display for GridDisplay<'a> {
@@ -22,7 +29,7 @@ impl<'a> Display for GridDisplay<'a> {
             let mut bottom = String::from("+");
 
             for column in 0..grid.columns {
-                let body = self.cell_content.to_owned();
+                let body = (self.cell_content)();
                 let mut east_boundary = String::from("|");
                 let mut south_boundary = String::from("---");
                 let corner = String::from("+");
@@ -146,25 +153,6 @@ impl Grid {
         Rc::new(RefCell::new(Cell::new(row, column)))
     }
 
-    /// Return the cell at the specified row and column.
-    ///
-    /// # Arguments
-    ///
-    /// * `row` - The row index of the cell.
-    /// * `column` - The column index of the cell.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the cell at the specified position.
-    pub fn cell(&self, row: i32, column: i32) -> Option<&GridCell> {
-        if (row >= 0 && row < self.rows) == false || (column >= 0 && column < self.columns) == false
-        {
-            return None;
-        }
-
-        Some(&self.cells[row as usize][column as usize])
-    }
-
     /// Return a random cell from the grid.
     ///
     /// # Returns
@@ -178,12 +166,40 @@ impl Grid {
         self.cell(row, column)
     }
 
+    pub fn display(&self) -> GridDisplay<'_> {
+        GridDisplay {
+            grid: self,
+            cell_content: || return String::from("   "),
+        }
+    }
+}
+
+impl BaseGrid for Grid {
+    /// Return the cell at the specified row and column.
+    ///
+    /// # Arguments
+    ///
+    /// * `row` - The row index of the cell.
+    /// * `column` - The column index of the cell.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the cell at the specified position.
+    fn cell(&self, row: i32, column: i32) -> Option<&GridCell> {
+        if (row >= 0 && row < self.rows) == false || (column >= 0 && column < self.columns) == false
+        {
+            return None;
+        }
+
+        Some(&self.cells[row as usize][column as usize])
+    }
+
     /// Return a struct to iterate the cells mutably.
     ///
     /// # Returns
     ///
     /// A GridMutIterator struct
-    pub fn iter(&self) -> GridIterator {
+    fn iter(&self) -> GridIterator {
         GridIterator::new(self.cells.iter().flatten())
     }
 
@@ -192,44 +208,8 @@ impl Grid {
     /// # Returns
     ///
     /// An iterator over the rows of the grid.
-    pub fn each_row(&self) -> Iter<'_, Vec<GridCell>> {
+    fn each_row(&self) -> Iter<'_, Vec<GridCell>> {
         self.cells.iter()
-    }
-
-    pub fn display(&self, cell_content: String) -> GridDisplay<'_> {
-        GridDisplay {
-            grid: self,
-            cell_content,
-        }
-    }
-}
-
-/// An iterator over the cells of a grid.
-pub struct GridIterator<'a> {
-    cells: Flatten<Iter<'a, Vec<GridCell>>>,
-}
-
-impl<'a> GridIterator<'a> {
-    /// Creates a new grid iterator.
-    ///
-    /// # Arguments
-    ///
-    /// * `cells` - An iterator over the cells of the grid.
-    pub fn new(cells: Flatten<Iter<'a, Vec<GridCell>>>) -> Self {
-        Self { cells }
-    }
-}
-
-impl<'a> Iterator for GridIterator<'a> {
-    type Item = &'a GridCell;
-
-    /// Returns the next cell in the grid.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the next cell in the grid.
-    fn next(&mut self) -> Option<Self::Item> {
-        self.cells.next()
     }
 }
 
