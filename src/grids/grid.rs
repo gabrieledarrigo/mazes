@@ -2,7 +2,6 @@ use super::{
     base_grid::{BaseGrid, GridCell, GridIterator},
     cell::Cell,
 };
-use rand::Rng;
 use std::{cell::RefCell, fmt::Display, rc::Rc, slice::Iter};
 
 pub struct GridDisplay<'a> {
@@ -153,24 +152,13 @@ impl Grid {
         Rc::new(RefCell::new(Cell::new(row, column)))
     }
 
-    /// Return a random cell from the grid.
+    /// Displays the grid.
     ///
     /// # Returns
     ///
-    /// An optional reference to a random cell from the grid.
-    pub fn random_cell(&self) -> Option<&GridCell> {
-        let mut rng = rand::thread_rng();
-        let row = rng.gen_range(0..self.rows);
-        let column = rng.gen_range(0..self.columns);
-
-        self.cell(row, column)
-    }
-
+    /// A `GridDisplay` instance for displaying the grid.
     pub fn display(&self) -> GridDisplay<'_> {
-        GridDisplay {
-            grid: self,
-            cell_content: || return String::from("   "),
-        }
+        GridDisplay::new(self, || String::from("   "))
     }
 }
 

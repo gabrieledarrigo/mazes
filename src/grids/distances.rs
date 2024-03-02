@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use super::base_grid::{BaseGrid, GridCell};
+use std::collections::HashMap;
 
 /// Represents a collection of distances from a root cell to other cells in a grid.
 #[derive(Debug)]

@@ -1,4 +1,4 @@
-use crate::grids::{base_grid::BaseGrid, grid::Grid};
+use crate::grids::base_grid::BaseGrid;
 use rand::Rng;
 
 /// Implements the Sidewinder algorithm for generating mazes.
