@@ -6,11 +6,11 @@ use std::{cell::RefCell, fmt::Display, rc::Rc, slice::Iter};
 
 pub struct GridDisplay<'a> {
     grid: &'a Grid,
-    cell_content: fn() -> String,
+    cell_content: fn(cell: GridCell) -> String,
 }
 
 impl<'a> GridDisplay<'a> {
-    pub fn new(grid: &'a Grid, cell_content: fn() -> String) -> Self {
+    pub fn new(grid: &'a Grid, cell_content: fn(cell: GridCell) -> String) -> Self {
         Self { grid, cell_content }
     }
 }
@@ -28,7 +28,7 @@ impl<'a> Display for GridDisplay<'a> {
             let mut bottom = String::from("+");
 
             for column in 0..grid.columns {
-                let body = (self.cell_content)();
+                let body = (self.cell_content)(self.grid.cell(row, column).unwrap().clone());
                 let mut east_boundary = String::from("|");
                 let mut south_boundary = String::from("---");
                 let corner = String::from("+");
@@ -158,7 +158,7 @@ impl Grid {
     ///
     /// A `GridDisplay` instance for displaying the grid.
     pub fn display(&self) -> GridDisplay<'_> {
-        GridDisplay::new(self, || String::from("   "))
+        GridDisplay::new(self, |_| String::from("   "))
     }
 }
 
