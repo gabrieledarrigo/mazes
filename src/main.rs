@@ -6,15 +6,15 @@ use grids::distance_grid::DistanceGrid;
 use grids::grid::Grid;
 
 fn main() {
-    let mut grid = Grid::new(4, 4);
+    let mut grid = Grid::new(5, 5);
     BinaryTree::on(&mut grid);
     println!("{}", grid.display());
 
-    let mut grid_1 = Grid::new(4, 4);
+    let mut grid_1 = Grid::new(5, 5);
     Sidewinder::on(&mut grid_1);
     println!("{}", grid_1.display());
 
-    let mut distance_grid = DistanceGrid::new(4, 4);
+    let mut distance_grid = DistanceGrid::new(5, 5);
     BinaryTree::on(&mut distance_grid);
     println!("{}", distance_grid.display());
 }
