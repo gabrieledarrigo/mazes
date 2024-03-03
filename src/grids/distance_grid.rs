@@ -6,21 +6,28 @@ use super::{
 
 pub struct DistanceGrid {
     grid: Grid,
+    distances: Distances,
 }
 
 impl DistanceGrid {
     pub fn new(rows: i32, columns: i32) -> Self {
         Self {
+            distances: Distances::new((0, 0)),
             grid: Grid::new(rows, columns),
         }
     }
 
-    pub fn display(&self) -> GridDisplay<'_> {
-        let root = self.cell(0, 0).unwrap();
-        let mut distances = Distances::new((root.borrow().row(), root.borrow().column()));
-        distances.calculate(root.clone(), &self.grid);
+    pub fn display(&mut self) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
+        let root = self.cell(0, 0).unwrap().to_owned();
+        self.distances.calculate(root, &self.grid);
 
-        GridDisplay::new(&self.grid, |_| String::from(" 1 "))
+        GridDisplay::new(&self.grid, |cell: GridCell| {
+            let row = cell.borrow_mut().row();
+            let column = cell.borrow_mut().column();
+            let distance = self.distances.get((row, column)).unwrap_or(&0);
+
+            String::from(format!(" {} ", distance))
+        })
     }
 }
 
@@ -38,15 +45,43 @@ impl BaseGrid for DistanceGrid {
     }
 }
 
+#[cfg(test)]
 mod tests {
-    use super::DistanceGrid;
-    use crate::algorithms::binary_tree::BinaryTree;
+    use super::*;
 
     #[test]
-    fn new_distance_grid() {
-        let mut grid = DistanceGrid::new(3, 3);
-        BinaryTree::on(&mut grid);
+    fn test_new_distance_grid() {
+        let rows = 3;
+        let columns = 3;
+        let distance_grid = DistanceGrid::new(rows, columns);
 
-        println!("{}", grid.display())
+        assert_eq!(distance_grid.grid, Grid::new(3, 3));
+        assert_eq!(distance_grid.distances.get((0, 0)), Some(&0));
+    }
+
+    #[test]
+    fn test_display_distance_grid() {
+        let rows = 3;
+        let columns = 3;
+        let mut distance_grid = DistanceGrid::new(rows, columns);
+        let display = distance_grid.display();
+
+        assert_eq!(
+            display
+                .to_string()
+                .replace(" ", "")
+                .replace("\n", "")
+                .trim(),
+            "+---+---+---+
+             | 0 | 0 | 0 |
+             +---+---+---+
+             | 0 | 0 | 0 |
+             +---+---+---+
+             | 0 | 0 | 0 |
+             +---+---+---+"
+                .replace(" ", "")
+                .replace("\n", "")
+                .trim(),
+        );
     }
 }

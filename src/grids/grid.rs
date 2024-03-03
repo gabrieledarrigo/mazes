@@ -4,18 +4,27 @@ use super::{
 };
 use std::{cell::RefCell, fmt::Display, rc::Rc, slice::Iter};
 
-pub struct GridDisplay<'a> {
+pub struct GridDisplay<'a, F>
+where
+    F: Fn(GridCell) -> String + 'a,
+{
     grid: &'a Grid,
-    cell_content: fn(cell: GridCell) -> String,
+    cell_content: F,
 }
 
-impl<'a> GridDisplay<'a> {
-    pub fn new(grid: &'a Grid, cell_content: fn(cell: GridCell) -> String) -> Self {
+impl<'a, F> GridDisplay<'a, F>
+where
+    F: Fn(GridCell) -> String + 'a,
+{
+    pub fn new(grid: &'a Grid, cell_content: F) -> Self {
         Self { grid, cell_content }
     }
 }
 
-impl<'a> Display for GridDisplay<'a> {
+impl<'a, F> Display for GridDisplay<'a, F>
+where
+    F: Fn(GridCell) -> String + 'a,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let grid = self.grid;
 
@@ -66,7 +75,7 @@ impl<'a> Display for GridDisplay<'a> {
 }
 
 /// Represents a grid of cells.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Grid {
     rows: i32,
     columns: i32,
@@ -157,7 +166,7 @@ impl Grid {
     /// # Returns
     ///
     /// A `GridDisplay` instance for displaying the grid.
-    pub fn display(&self) -> GridDisplay<'_> {
+    pub fn display(&self) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
         GridDisplay::new(self, |_| String::from("   "))
     }
 }

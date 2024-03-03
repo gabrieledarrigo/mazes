@@ -2,7 +2,6 @@ use super::base_grid::{BaseGrid, GridCell};
 use std::collections::HashMap;
 
 /// Represents a collection of distances from a root cell to other cells in a grid.
-#[derive(Debug)]
 pub struct Distances {
     root: (i32, i32),
     cells: HashMap<(i32, i32), i32>,
