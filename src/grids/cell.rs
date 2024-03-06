@@ -175,6 +175,10 @@ impl Cell {
     pub fn set_east(&mut self, east: Option<(i32, i32)>) {
         self.east = east;
     }
+
+    pub fn to_row_and_column(&self) -> (i32, i32) {
+        (self.row, self.column)
+    }
 }
 
 #[cfg(test)]

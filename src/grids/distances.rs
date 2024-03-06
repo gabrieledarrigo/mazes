@@ -2,6 +2,7 @@ use super::base_grid::{BaseGrid, GridCell};
 use std::collections::HashMap;
 
 /// Represents a collection of distances from a root cell to other cells in a grid.
+#[derive(Debug)]
 pub struct Distances {
     root: (i32, i32),
     cells: HashMap<(i32, i32), i32>,
@@ -56,7 +57,7 @@ impl Distances {
         self.cells.keys().collect()
     }
 
-    pub fn calculate(&mut self, root: GridCell, grid: &impl BaseGrid) {
+    pub fn calculate(&mut self, root: GridCell, grid: &impl BaseGrid) -> &mut Self {
         let mut frontier = vec![root];
 
         while !frontier.is_empty() {
@@ -83,6 +84,51 @@ impl Distances {
 
             frontier = new_frontier;
         }
+
+        self
+    }
+
+    pub fn path_to(&mut self, goal: GridCell, grid: &impl BaseGrid) -> Option<Self> {
+        let mut current: std::rc::Rc<std::cell::RefCell<super::cell::Cell>> = goal;
+        let mut breadcrumbs = Distances::new(self.root);
+
+        let mut current_cell = current.borrow().to_row_and_column();
+
+        if let Some(distance) = self.get(current_cell) {
+            breadcrumbs.set(current_cell, *distance);
+        } else {
+            return None;
+        }
+
+        while current_cell != self.root {
+            if let Some(distance) = self.get(current_cell) {
+                let mut next_current = None;
+
+                for (neighbour, _) in current.borrow().links() {
+                    if let Some(neighbour_distance) = self.get(*neighbour) {
+                        if *neighbour_distance < *distance {
+                            breadcrumbs.set(*neighbour, *neighbour_distance);
+                            next_current =
+                                Some(grid.cell(neighbour.0, neighbour.1).unwrap().clone());
+                            break;
+                        }
+                    } else {
+                        return None;
+                    }
+                }
+
+                if let Some(new_current) = next_current {
+                    current = new_current;
+                    current_cell = current.borrow().to_row_and_column();
+                } else {
+                    break;
+                }
+            } else {
+                return None;
+            }
+        }
+
+        Some(breadcrumbs)
     }
 }
 
@@ -140,5 +186,23 @@ mod tests {
 
         // Verify the total number of cells in the distances collection
         assert_eq!(distances.cells().len(), 9);
+    }
+
+    #[test]
+    fn test_path_to() {
+        let mut grid = Grid::new(3, 3);
+        BinaryTree::on(&mut grid);
+
+        let root = grid.cell(0, 0).unwrap().clone();
+        let goal = grid.cell(2, 2).unwrap().clone();
+
+        let mut distances = Distances::new(root.borrow().to_row_and_column());
+        distances.calculate(root, &grid);
+
+        let path = distances.path_to(goal, &grid);
+
+        assert_eq!(path.is_some(), true);
+        let breadcrumbs = path.unwrap();
+        assert_eq!(breadcrumbs.get((0, 0)), Some(&0));
     }
 }

@@ -1,6 +1,6 @@
 use super::{
     base_grid::{BaseGrid, GridCell, GridIterator},
-    distances::Distances,
+    distances::{self, Distances},
     grid::{Grid, GridDisplay},
 };
 
@@ -43,6 +43,30 @@ impl DistanceGrid {
             let distance = self.distances.get((row, column)).unwrap_or(&0);
 
             String::from(format!(" {:X} ", distance))
+        })
+    }
+
+    pub fn display_path_to(
+        &mut self,
+        goal: GridCell,
+    ) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
+        let root = self.cell(0, 0).unwrap().to_owned();
+        self.distances.calculate(root, &self.grid);
+        self.distances = self.distances.path_to(goal, &self.grid).unwrap();
+
+        GridDisplay::new(&self.grid, |cell: GridCell| {
+            let row = cell.borrow_mut().row();
+            let column = cell.borrow_mut().column();
+            let distance = self.distances.get((row, column)).unwrap_or(&0);
+
+            String::from(format!(
+                " {} ",
+                if *distance > 0 {
+                    format!("{:X}", distance)
+                } else {
+                    " ".to_string()
+                }
+            ))
         })
     }
 }
