@@ -57,6 +57,16 @@ impl Distances {
         self.cells.keys().collect()
     }
 
+    /// Calculates the distances from the root cell to all other cells in the grid.
+    ///
+    /// # Arguments
+    ///
+    /// * `root` - The root cell from which to calculate the distances.
+    /// * `grid` - The grid on which the distances are calculated.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to `Self` (the `Distances` instance) after the calculation is complete.
     pub fn calculate(&mut self, root: GridCell, grid: &impl BaseGrid) -> &mut Self {
         let mut frontier = vec![root];
 
@@ -88,7 +98,17 @@ impl Distances {
         self
     }
 
-    pub fn path_to(&mut self, goal: GridCell, grid: &impl BaseGrid) -> Option<Self> {
+    /// Calculates the shortest path from the root cell to the specified goal cell.
+    ///
+    /// # Arguments
+    ///
+    /// * `goal` - The goal cell to which the shortest path is calculated.
+    /// * `grid` - The grid on which the shortest path is calculated.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to `Self` (the `Distances` instance) after the shortest path calculation is complete.
+    pub fn path_to(&mut self, goal: GridCell, grid: &impl BaseGrid) -> &mut Self {
         let mut current: std::rc::Rc<std::cell::RefCell<super::cell::Cell>> = goal;
         let mut breadcrumbs = Distances::new(self.root);
 
@@ -97,7 +117,7 @@ impl Distances {
         if let Some(distance) = self.get(current_cell) {
             breadcrumbs.set(current_cell, *distance);
         } else {
-            return None;
+            return self;
         }
 
         while current_cell != self.root {
@@ -113,7 +133,7 @@ impl Distances {
                             break;
                         }
                     } else {
-                        return None;
+                        return self;
                     }
                 }
 
@@ -124,11 +144,13 @@ impl Distances {
                     break;
                 }
             } else {
-                return None;
+                return self;
             }
         }
 
-        Some(breadcrumbs)
+        self.cells = breadcrumbs.cells;
+
+        self
     }
 }
 
@@ -197,12 +219,8 @@ mod tests {
         let goal = grid.cell(2, 2).unwrap().clone();
 
         let mut distances = Distances::new(root.borrow().to_row_and_column());
-        distances.calculate(root, &grid);
+        distances.calculate(root, &grid).path_to(goal, &grid);
 
-        let path = distances.path_to(goal, &grid);
-
-        assert_eq!(path.is_some(), true);
-        let breadcrumbs = path.unwrap();
-        assert_eq!(breadcrumbs.get((0, 0)), Some(&0));
+        assert_eq!(distances.get((0, 0)), Some(&0));
     }
 }

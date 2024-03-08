@@ -1,6 +1,6 @@
 use super::{
     base_grid::{BaseGrid, GridCell, GridIterator},
-    distances::{self, Distances},
+    distances::Distances,
     grid::{Grid, GridDisplay},
 };
 
@@ -46,13 +46,23 @@ impl DistanceGrid {
         })
     }
 
+    /// Displays the grid with the path to the specified goal cell.
+    ///
+    /// # Arguments
+    ///
+    /// * `goal` - The goal cell to find the path to.
+    ///
+    /// # Returns
+    ///
+    /// A `GridDisplay` instance that can be used to display the grid.
     pub fn display_path_to(
         &mut self,
         goal: GridCell,
     ) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
         let root = self.cell(0, 0).unwrap().to_owned();
-        self.distances.calculate(root, &self.grid);
-        self.distances = self.distances.path_to(goal, &self.grid).unwrap();
+        self.distances
+            .calculate(root, &self.grid)
+            .path_to(goal, &self.grid);
 
         GridDisplay::new(&self.grid, |cell: GridCell| {
             let row = cell.borrow_mut().row();
