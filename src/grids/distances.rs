@@ -1,6 +1,12 @@
 use super::base_grid::{BaseGrid, GridCell};
 use std::collections::HashMap;
 
+/// Represents the maximum distance in a Grid from a root cell.
+pub struct MaxDistance {
+    max_cell: (i32, i32),
+    max_distance: i32,
+}
+
 /// Represents a collection of distances from a root cell to other cells in a grid.
 #[derive(Debug)]
 pub struct Distances {
@@ -152,6 +158,28 @@ impl Distances {
 
         self
     }
+
+    /// Calculates the maximum distance in the grid from the root cell to any other cell.
+    ///
+    /// # Returns
+    ///
+    /// A `MaxDistance` struct containing the maximum cell and distance.
+    pub fn max(&self) -> MaxDistance {
+        let mut max_cell = self.root;
+        let mut max_distance = 0;
+
+        for (cell, distance) in self.cells.clone() {
+            if distance > max_distance {
+                max_distance = distance;
+                max_cell = cell;
+            }
+        }
+
+        MaxDistance {
+            max_cell,
+            max_distance,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -222,5 +250,19 @@ mod tests {
         distances.calculate(root, &grid).path_to(goal, &grid);
 
         assert_eq!(distances.get((0, 0)), Some(&0));
+    }
+
+    #[test]
+    fn test_max() {
+        let root = (0, 0);
+        let mut distances = Distances::new(root);
+        distances.set((1, 0), 1);
+        distances.set((2, 0), 2);
+        distances.set((3, 0), 3);
+
+        let max_distance = distances.max();
+
+        assert_eq!(max_distance.max_cell, (3, 0));
+        assert_eq!(max_distance.max_distance, 3);
     }
 }
