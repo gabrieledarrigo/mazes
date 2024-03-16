@@ -19,6 +19,7 @@ fn main() {
     let mut distance_grid = DistanceGrid::new(5, 5);
     BinaryTree::on(&mut distance_grid);
     println!("{}", distance_grid.display());
+    println!("{}", distance_grid.display_with_color());
     println!(
         "{}",
         distance_grid.display_path_to(distance_grid.cell(4, 0).unwrap().clone())

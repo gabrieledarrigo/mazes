@@ -3,8 +3,8 @@ use std::collections::HashMap;
 
 /// Represents the maximum distance in a Grid from a root cell.
 pub struct MaxDistance {
-    max_cell: (i32, i32),
-    max_distance: i32,
+    pub max_cell: (i32, i32),
+    pub max_distance: i32,
 }
 
 /// Represents a collection of distances from a root cell to other cells in a grid.

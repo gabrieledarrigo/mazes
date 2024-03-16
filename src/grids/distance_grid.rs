@@ -1,3 +1,5 @@
+use colored::Colorize;
+
 use super::{
     base_grid::{BaseGrid, GridCell, GridIterator},
     distances::Distances,
@@ -77,6 +79,34 @@ impl DistanceGrid {
                     " ".to_string()
                 }
             ))
+        })
+    }
+
+    /// Displays the grid with colors based on the distances between cells.
+    ///
+    /// # Returns
+    ///
+    /// A `GridDisplay` instance that can be used to display the grid.
+    pub fn display_with_color(&mut self) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
+        let root = self.cell(0, 0).unwrap().to_owned();
+        self.distances.calculate(root, &self.grid);
+
+        GridDisplay::new(&self.grid, |cell: GridCell| {
+            let row = cell.borrow_mut().row();
+            let column = cell.borrow_mut().column();
+            let distance = self.distances.get((row, column)).unwrap_or(&0);
+            let max_distance = self.distances.max().max_distance.clone();
+
+            let intensity = f64::from(max_distance - distance) / f64::from(max_distance);
+            let dark = (255.0 * intensity).floor();
+            let bright = 128.0 + (127.0 * intensity).floor();
+
+            String::from(
+                format!(" {:X} ", distance)
+                    .as_str()
+                    .on_truecolor(dark as u8, dark as u8, bright as u8)
+                    .to_string(),
+            )
         })
     }
 }
