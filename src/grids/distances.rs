@@ -54,15 +54,6 @@ impl Distances {
         self.cells.insert(cell, distance);
     }
 
-    /// Returns a vector of references to all cells in the distances collection.
-    ///
-    /// # Returns
-    ///
-    /// A vector of references to all cells in the distances collection.
-    pub fn cells(&self) -> Vec<&(i32, i32)> {
-        self.cells.keys().collect()
-    }
-
     /// Calculates the distances from the root cell to all other cells in the grid.
     ///
     /// # Arguments
@@ -190,6 +181,10 @@ mod tests {
     use crate::BinaryTree;
     use std::collections::HashMap;
 
+    // fn cells_to_vec(cells: HashMap<(i32, i32), i32>) -> Vec<&'static (i32, i32)> {
+    //     return cells.keys().collect();
+    // }
+
     #[test]
     fn test_new() {
         let root = (0, 0);
@@ -210,17 +205,6 @@ mod tests {
     }
 
     #[test]
-    fn test_cells() {
-        let mut distances = Distances::new((0, 0));
-        distances.set((0, 1), 1);
-        distances.set((0, 2), 2);
-
-        assert!(distances.cells().contains(&&(0, 0)));
-        assert!(distances.cells().contains(&&(0, 1)));
-        assert!(distances.cells().contains(&&(0, 2)));
-    }
-
-    #[test]
     fn test_calculate() {
         let mut grid = Grid::new(3, 3);
         BinaryTree::on(&mut grid);
@@ -235,7 +219,7 @@ mod tests {
         assert_eq!(*distances.get((0, 2)).unwrap(), 2);
 
         // Verify the total number of cells in the distances collection
-        assert_eq!(distances.cells().len(), 9);
+        assert_eq!(distances.cells.keys().len(), 9);
     }
 
     #[test]
