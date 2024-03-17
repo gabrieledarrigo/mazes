@@ -1,6 +1,5 @@
-use rand::Rng;
-
 use crate::grids::base_grid::{BaseGrid, GridCell};
+use rand::Rng;
 
 pub struct AldousBroder {}
 
@@ -37,5 +36,25 @@ impl AldousBroder {
         let (row, column) = neighbors[index];
 
         grid.cell(row, column).unwrap().clone()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::grids::grid::Grid;
+
+    #[test]
+    fn test_aldoous_broder() {
+        let mut grid = Grid::new(5, 5);
+
+        AldousBroder::on(&mut grid);
+
+        assert_eq!(grid.rows(), 5);
+        assert_eq!(grid.columns(), 5);
+
+        for cell in grid.iter() {
+            assert!(!cell.borrow().links().is_empty());
+        }
     }
 }
