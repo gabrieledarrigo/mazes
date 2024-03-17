@@ -112,6 +112,14 @@ impl DistanceGrid {
 }
 
 impl BaseGrid for DistanceGrid {
+    fn rows(&self) -> i32 {
+        self.grid.rows()
+    }
+
+    fn columns(&self) -> i32 {
+        self.grid.columns()
+    }
+
     fn cell(&self, row: i32, column: i32) -> Option<&GridCell> {
         self.grid.cell(row, column)
     }

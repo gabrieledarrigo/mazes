@@ -5,6 +5,12 @@ pub type GridCell = Rc<RefCell<Cell>>;
 
 /// The `BaseGrid` trait represents a grid structure.
 pub trait BaseGrid {
+    /// Returns the number of rows in the grid.
+    fn rows(&self) -> i32;
+
+    /// Returns the number of columns in the grid.
+    fn columns(&self) -> i32;
+
     /// Returns a reference to the cell at the specified row and column.
     ///
     /// # Arguments

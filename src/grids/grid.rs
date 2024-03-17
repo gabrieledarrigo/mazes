@@ -172,6 +172,16 @@ impl Grid {
 }
 
 impl BaseGrid for Grid {
+    /// Returns the number of rows in the grid.
+    fn rows(&self) -> i32 {
+        self.rows
+    }
+
+    /// Returns the number of columns in the grid.
+    fn columns(&self) -> i32 {
+        self.columns
+    }
+
     /// Return the cell at the specified row and column.
     ///
     /// # Arguments
