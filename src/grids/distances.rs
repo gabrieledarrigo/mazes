@@ -3,8 +3,7 @@ use std::collections::HashMap;
 
 /// Represents the maximum distance in a Grid from a root cell.
 pub struct MaxDistance {
-    max_cell: (i32, i32),
-    max_distance: i32,
+    value: i32,
 }
 
 impl MaxDistance {
@@ -12,26 +11,13 @@ impl MaxDistance {
     ///
     /// # Arguments
     ///
-    /// * `max_cell` - The maximum cell in the grid.
-    /// * `max_distance` - The maximum distance from the root cell to the maximum cell.
+    /// * `value` - The maximum distance from the root cell to the maximum cell.
     ///
     /// # Returns
     ///
     /// A new instance of `MaxDistance`.
-    pub fn new(max_cell: (i32, i32), max_distance: i32) -> Self {
-        Self {
-            max_cell,
-            max_distance,
-        }
-    }
-
-    /// Returns the maximum cell in the grid.
-    ///
-    /// # Returns
-    ///
-    /// The maximum cell in the grid.
-    pub fn max_cell(&self) -> (i32, i32) {
-        self.max_cell
+    pub fn new(value: i32) -> Self {
+        Self { value }
     }
 
     /// Returns the maximum distance from the root cell to the maximum cell.
@@ -39,8 +25,8 @@ impl MaxDistance {
     /// # Returns
     ///
     /// The maximum distance from the root cell to the maximum cell.
-    pub fn max_distance(&self) -> i32 {
-        self.max_distance
+    pub fn value(&self) -> i32 {
+        self.value
     }
 }
 
@@ -192,21 +178,16 @@ impl Distances {
     /// # Returns
     ///
     /// A `MaxDistance` struct containing the maximum cell and distance.
-    pub fn max(&self) -> MaxDistance {
-        let mut max_cell = self.root;
+    pub fn max_distance(&self) -> MaxDistance {
         let mut max_distance = 0;
 
-        for (cell, distance) in self.cells.clone() {
+        for (_, distance) in self.cells.clone() {
             if distance > max_distance {
                 max_distance = distance;
-                max_cell = cell;
             }
         }
 
-        MaxDistance {
-            max_cell,
-            max_distance,
-        }
+        MaxDistance::new(max_distance)
     }
 }
 
@@ -217,10 +198,6 @@ mod tests {
     use crate::grids::base_grid::BaseGrid;
     use crate::BinaryTree;
     use std::collections::HashMap;
-
-    // fn cells_to_vec(cells: HashMap<(i32, i32), i32>) -> Vec<&'static (i32, i32)> {
-    //     return cells.keys().collect();
-    // }
 
     #[test]
     fn test_new() {
@@ -281,9 +258,8 @@ mod tests {
         distances.set((2, 0), 2);
         distances.set((3, 0), 3);
 
-        let max_distance = distances.max();
+        let max_distance = distances.max_distance();
 
-        assert_eq!(max_distance.max_cell, (3, 0));
-        assert_eq!(max_distance.max_distance, 3);
+        assert_eq!(max_distance.value, 3);
     }
 }

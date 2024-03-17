@@ -95,7 +95,7 @@ impl DistanceGrid {
             let row = cell.borrow_mut().row();
             let column = cell.borrow_mut().column();
             let distance = self.distances.get((row, column)).unwrap_or(&0);
-            let max_distance = self.distances.max().max_distance().clone();
+            let max_distance = self.distances.max_distance().value();
 
             let intensity = f64::from(max_distance - distance) / f64::from(max_distance);
             let dark = (255.0 * intensity).floor();
