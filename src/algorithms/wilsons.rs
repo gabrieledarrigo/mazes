@@ -1,9 +1,15 @@
 use crate::{grids::base_grid::BaseGrid, utils::utils::*};
 use rand::Rng;
 
+/// The Wilsons struct represents the Wilson's algorithm for generating mazes.
 pub struct Wilsons {}
 
 impl Wilsons {
+    /// Generates a maze using the Wilson's algorithm on the given grid.
+    ///
+    /// # Arguments
+    ///
+    /// * `grid` - The grid on which to generate the maze.
     pub fn on(grid: &impl BaseGrid) {
         let mut unvisited = vec![];
 

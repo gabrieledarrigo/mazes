@@ -1,8 +1,14 @@
 use crate::{grids::base_grid::BaseGrid, utils::utils::*};
 
+/// The Aldous-Broder algorithm for generating a maze.
 pub struct AldousBroder {}
 
 impl AldousBroder {
+    /// Generates a maze using the Aldous-Broder algorithm on the given grid.
+    ///
+    /// # Arguments
+    ///
+    /// * `grid` - The grid on which to generate the maze.
     pub fn on(grid: &impl BaseGrid) {
         let mut cell = random_cell(grid);
         let mut unvisited = (grid.rows() * grid.columns()) - 1;
