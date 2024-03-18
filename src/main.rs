@@ -1,5 +1,6 @@
 mod algorithms;
 mod grids;
+mod utils;
 
 use algorithms::{
     aldous_broder::AldousBroder, binary_tree::BinaryTree, sidewinder::Sidewinder, wilsons::Wilsons,

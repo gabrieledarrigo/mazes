@@ -1,6 +1,5 @@
+use crate::{grids::base_grid::BaseGrid, utils::utils::*};
 use rand::Rng;
-
-use crate::grids::base_grid::{BaseGrid, GridCell};
 
 pub struct Wilsons {}
 
@@ -19,11 +18,11 @@ impl Wilsons {
         while !unvisited.is_empty() {
             let mut path = vec![];
 
-            let mut cell = Self::random_cell(grid);
+            let mut cell = random_cell(grid);
             path.push(cell.clone());
 
             while unvisited.contains(&&cell) {
-                cell = Self::random_neighbor(grid, cell.clone());
+                cell = random_neighbor(grid, cell.clone());
 
                 let position = path.iter().position(|c| {
                     c.borrow().to_row_and_column() == cell.borrow().to_row_and_column()
@@ -45,22 +44,21 @@ impl Wilsons {
             unvisited.retain(|cell| !visited.contains(cell));
         }
     }
+}
 
-    fn random_cell(grid: &impl BaseGrid) -> GridCell {
-        let mut rng = rand::thread_rng();
-        let row = rng.gen_range(0..grid.rows());
-        let column = rng.gen_range(0..grid.columns());
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::grids::grid::Grid;
 
-        grid.cell(row, column).unwrap().clone()
-    }
+    #[test]
+    fn test_wilsons_on() {
+        let grid = Grid::new(3, 3);
+        Wilsons::on(&grid);
 
-    fn random_neighbor(grid: &impl BaseGrid, cell: GridCell) -> GridCell {
-        let mut rng = rand::thread_rng();
-
-        let neighbors = cell.borrow_mut().neighbors();
-        let index = rng.gen_range(0..neighbors.len());
-        let (row, column) = neighbors[index];
-
-        grid.cell(row, column).unwrap().clone()
+        // Assert that all cells are linked
+        for cell in grid.iter() {
+            assert!(cell.borrow().links().len() > 0);
+        }
     }
 }
