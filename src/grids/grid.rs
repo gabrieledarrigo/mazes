@@ -1,78 +1,9 @@
 use super::{
     base_grid::{BaseGrid, GridCell, GridIterator},
     cell::Cell,
+    grid_display::GridDisplay,
 };
-use std::{cell::RefCell, fmt::Display, rc::Rc, slice::Iter};
-
-pub struct GridDisplay<'a, F>
-where
-    F: Fn(GridCell) -> String + 'a,
-{
-    grid: &'a Grid,
-    cell_content: F,
-}
-
-impl<'a, F> GridDisplay<'a, F>
-where
-    F: Fn(GridCell) -> String + 'a,
-{
-    pub fn new(grid: &'a Grid, cell_content: F) -> Self {
-        Self { grid, cell_content }
-    }
-}
-
-impl<'a, F> Display for GridDisplay<'a, F>
-where
-    F: Fn(GridCell) -> String + 'a,
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let grid = self.grid;
-
-        let mut output = String::from("+");
-        output.push_str(&"---+".repeat(grid.columns as usize));
-        output.push_str(&"\n");
-
-        for row in 0..grid.rows {
-            let mut top = String::from("|");
-            let mut bottom = String::from("+");
-
-            for column in 0..grid.columns {
-                let body = (self.cell_content)(self.grid.cell(row, column).unwrap().clone());
-                let mut east_boundary = String::from("|");
-                let mut south_boundary = String::from("---");
-                let corner = String::from("+");
-
-                if let Some(cell) = grid.cell(row, column) {
-                    let cell = cell.borrow();
-                    let east = cell.east().unwrap_or((-1, -1));
-                    let south = cell.south().unwrap_or((-1, -1));
-
-                    if cell.links().contains_key(&east) {
-                        east_boundary = String::from(" ");
-                    }
-
-                    if cell.links().contains_key(&south) {
-                        south_boundary = String::from("   ");
-                    }
-                }
-
-                top.push_str(&body);
-                top.push_str(&east_boundary);
-
-                bottom.push_str(&south_boundary);
-                bottom.push_str(&corner);
-            }
-
-            top.push('\n');
-            bottom.push('\n');
-
-            output.push_str(&top);
-            output.push_str(&bottom);
-        }
-
-        write!(f, "{}", output)
-    }
-}
+use std::{cell::RefCell, rc::Rc, slice::Iter};
 
 /// Represents a grid of cells.
 #[derive(Debug, Clone, PartialEq)]

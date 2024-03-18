@@ -1,10 +1,10 @@
-use colored::Colorize;
-
 use super::{
     base_grid::{BaseGrid, GridCell, GridIterator},
     distances::Distances,
-    grid::{Grid, GridDisplay},
+    grid::Grid,
+    grid_display::GridDisplay,
 };
+use colored::Colorize;
 
 /// Represents a grid with distances between cells.
 pub struct DistanceGrid {
