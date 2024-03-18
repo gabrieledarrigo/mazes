@@ -1,7 +1,9 @@
 mod algorithms;
 mod grids;
 
-use algorithms::{aldous_broder::AldousBroder, binary_tree::BinaryTree, sidewinder::Sidewinder};
+use algorithms::{
+    aldous_broder::AldousBroder, binary_tree::BinaryTree, sidewinder::Sidewinder, wilsons::Wilsons,
+};
 use grids::{base_grid::BaseGrid, distance_grid::DistanceGrid, grid::Grid};
 
 fn main() {
@@ -33,4 +35,9 @@ fn main() {
     let mut grid_2 = DistanceGrid::new(6, 6);
     AldousBroder::on(&mut grid_2);
     println!("{}", grid_2.display_with_color());
+
+    println!("Wilsons");
+    let mut grid_2 = Grid::new(6, 6);
+    Wilsons::on(&mut grid_2);
+    println!("{}", grid_2.display());
 }

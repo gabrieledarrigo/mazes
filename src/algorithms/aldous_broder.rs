@@ -4,7 +4,7 @@ use rand::Rng;
 pub struct AldousBroder {}
 
 impl AldousBroder {
-    pub fn on(grid: &mut impl BaseGrid) {
+    pub fn on(grid: &impl BaseGrid) {
         let mut cell = Self::random_cell(grid);
         let mut unvisited = (grid.rows() * grid.columns()) - 1;
 
@@ -20,7 +20,7 @@ impl AldousBroder {
         }
     }
 
-    fn random_cell(grid: &mut impl BaseGrid) -> GridCell {
+    fn random_cell(grid: &impl BaseGrid) -> GridCell {
         let mut rng = rand::thread_rng();
         let row = rng.gen_range(0..grid.rows());
         let column = rng.gen_range(0..grid.columns());
@@ -28,7 +28,7 @@ impl AldousBroder {
         grid.cell(row, column).unwrap().clone()
     }
 
-    fn random_neighbor(grid: &mut impl BaseGrid, cell: GridCell) -> GridCell {
+    fn random_neighbor(grid: &impl BaseGrid, cell: GridCell) -> GridCell {
         let mut rng = rand::thread_rng();
 
         let neighbors = cell.borrow_mut().neighbors();
