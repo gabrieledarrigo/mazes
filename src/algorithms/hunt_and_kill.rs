@@ -1,8 +1,14 @@
 use crate::{grids::base_grid::BaseGrid, utils::utils::*};
 
+/// The `HuntAndKill` struct represents the Hunt and Kill algorithm for generating mazes.
 pub struct HuntAndKill {}
 
 impl HuntAndKill {
+    /// Executes the Hunt and Kill algorithm on the given grid.
+    ///
+    /// # Arguments
+    ///
+    /// * `grid` - The grid on which to execute the algorithm.
     pub fn on(grid: &impl BaseGrid) {
         let mut current = Some(random_cell(grid));
 
