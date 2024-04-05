@@ -18,27 +18,17 @@ pub fn random_cell(grid: &impl BaseGrid) -> GridCell {
     grid.cell(row, column).unwrap().clone()
 }
 
-/// Returns a random neighbor of the given cell in the given grid.
+/// Returns a random neighbor cell from the given grid and a list of neighbors.
 ///
 /// # Arguments
 ///
-/// * `grid` - The grid in which the cell is located.
-/// * `cell` - The cell for which to find a random neighbor.
+/// * `grid` - The grid from which to select a random neighbor cell.
+/// * `neighbors` - A list of coordinates representing the neighbors of a cell.
 ///
 /// # Returns
 ///
 /// The randomly selected neighbor `GridCell`.
-pub fn random_neighbor(grid: &impl BaseGrid, cell: GridCell) -> GridCell {
-    let mut rng = rand::thread_rng();
-
-    let neighbors = cell.borrow_mut().neighbors();
-    let index = rng.gen_range(0..neighbors.len());
-    let (row, column) = neighbors[index];
-
-    grid.cell(row, column).unwrap().clone()
-}
-
-pub fn random_n(grid: &impl BaseGrid, neighbors: Vec<(i32, i32)>) -> GridCell {
+pub fn random_neighbor(grid: &impl BaseGrid, neighbors: Vec<(i32, i32)>) -> GridCell {
     let mut rng = rand::thread_rng();
 
     let index = rng.gen_range(0..neighbors.len());

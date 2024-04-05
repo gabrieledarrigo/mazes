@@ -28,7 +28,7 @@ impl Wilsons {
             path.push(cell.clone());
 
             while unvisited.contains(&&cell) {
-                cell = random_neighbor(grid, cell.clone());
+                cell = random_neighbor(grid, cell.clone().borrow().neighbors());
 
                 let position = path.iter().position(|c| {
                     c.borrow().to_row_and_column() == cell.borrow().to_row_and_column()

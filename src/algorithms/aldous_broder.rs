@@ -14,7 +14,7 @@ impl AldousBroder {
         let mut unvisited = (grid.rows() * grid.columns()) - 1;
 
         while unvisited > 0 {
-            let neighbor = random_neighbor(grid, cell.clone());
+            let neighbor = random_neighbor(grid, cell.borrow().neighbors());
 
             if neighbor.borrow_mut().links().is_empty() {
                 cell.borrow_mut().link(neighbor.clone());

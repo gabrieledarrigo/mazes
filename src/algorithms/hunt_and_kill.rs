@@ -1,7 +1,4 @@
-use crate::{
-    grids::base_grid::BaseGrid,
-    utils::utils::{random_cell, random_n},
-};
+use crate::{grids::base_grid::BaseGrid, utils::utils::*};
 
 pub struct HuntAndKill {}
 
@@ -22,7 +19,7 @@ impl HuntAndKill {
                 .collect::<Vec<(i32, i32)>>();
 
             if !unvisited.is_empty() {
-                let neighbor = random_n(grid, unvisited);
+                let neighbor = random_neighbor(grid, unvisited);
                 cell.borrow_mut().link(neighbor.clone());
                 current = Some(neighbor);
             } else {
@@ -42,7 +39,7 @@ impl HuntAndKill {
 
                     if cell.borrow().links().is_empty() && !visited.is_empty() {
                         current = Some(cell.clone());
-                        let neighbor = random_n(grid, visited);
+                        let neighbor = random_neighbor(grid, visited);
                         cell.borrow_mut().link(neighbor.clone());
                         break;
                     }
