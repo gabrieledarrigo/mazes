@@ -176,6 +176,11 @@ impl Cell {
         self.east = east;
     }
 
+    /// Converts the cell to a tuple reporting the row and column.
+    ///
+    /// # Returns
+    ///
+    /// A tuple representing the row and column of the cell.
     pub fn to_row_and_column(&self) -> (i32, i32) {
         (self.row, self.column)
     }

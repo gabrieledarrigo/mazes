@@ -3,7 +3,8 @@ mod grids;
 mod utils;
 
 use algorithms::{
-    aldous_broder::AldousBroder, binary_tree::BinaryTree, sidewinder::Sidewinder, wilsons::Wilsons,
+    aldous_broder::AldousBroder, binary_tree::BinaryTree, hunt_and_kill::HuntAndKill,
+    sidewinder::Sidewinder, wilsons::Wilsons,
 };
 use grids::{base_grid::BaseGrid, distance_grid::DistanceGrid, grid::Grid};
 
@@ -14,31 +15,33 @@ fn main() {
     println!("{}", grid.display());
 
     println!("Sidewinder");
-    let mut grid_1 = Grid::new(6, 6);
-    Sidewinder::on(&mut grid_1);
-    println!("{}", grid_1.display());
+    let mut grid = Grid::new(6, 6);
+    Sidewinder::on(&mut grid);
+    println!("{}", grid.display());
 
     println!("With distances");
-    let mut distance_grid = DistanceGrid::new(6, 6);
-    BinaryTree::on(&mut distance_grid);
-    println!("{}", distance_grid.display());
+    let mut grid = DistanceGrid::new(6, 6);
+    BinaryTree::on(&mut grid);
+    println!("{}", grid.display());
 
     println!("With path from north west to south east");
-    println!(
-        "{}",
-        distance_grid.display_path_to(distance_grid.cell(5, 0).unwrap().clone())
-    );
+    println!("{}", grid.display_path_to(grid.cell(5, 0).unwrap().clone()));
 
     println!("With colors");
-    println!("{}", distance_grid.display_with_color());
+    println!("{}", grid.display_with_color());
 
     println!("Aldous Brother");
-    let mut grid_2 = DistanceGrid::new(6, 6);
-    AldousBroder::on(&mut grid_2);
-    println!("{}", grid_2.display_with_color());
+    let mut grid = DistanceGrid::new(6, 6);
+    AldousBroder::on(&mut grid);
+    println!("{}", grid.display_with_color());
 
     println!("Wilsons");
-    let mut grid_2 = Grid::new(6, 6);
-    Wilsons::on(&mut grid_2);
-    println!("{}", grid_2.display());
+    let mut grid = Grid::new(6, 6);
+    Wilsons::on(&mut grid);
+    println!("{}", grid.display());
+
+    println!("Hunt And Kill");
+    let mut grid = Grid::new(6, 6);
+    HuntAndKill::on(&mut grid);
+    println!("{}", grid.display());
 }

@@ -37,3 +37,12 @@ pub fn random_neighbor(grid: &impl BaseGrid, cell: GridCell) -> GridCell {
 
     grid.cell(row, column).unwrap().clone()
 }
+
+pub fn random_n(grid: &impl BaseGrid, neighbors: Vec<(i32, i32)>) -> GridCell {
+    let mut rng = rand::thread_rng();
+
+    let index = rng.gen_range(0..neighbors.len());
+    let (row, column) = neighbors[index];
+
+    grid.cell(row, column).unwrap().clone()
+}
