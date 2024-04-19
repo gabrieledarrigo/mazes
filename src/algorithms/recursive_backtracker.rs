@@ -1,0 +1,60 @@
+use crate::{
+    grids::base_grid::{BaseGrid, GridCell},
+    utils::utils::{random_cell, random_neighbor},
+};
+
+/// The RecursiveBacktracker struct represents the recursive backtracking algorithm.
+pub struct RecursiveBacktracker {}
+
+impl RecursiveBacktracker {
+    /// Executes the recursive backtracking algorithm on the given grid.
+    ///
+    /// # Arguments
+    ///
+    /// * `grid` - The grid on which to execute the algorithm.
+    pub fn on(grid: &impl BaseGrid) {
+        let cell = random_cell(grid);
+
+        let mut stack: Vec<GridCell> = vec![];
+        stack.push(cell);
+
+        while !stack.is_empty() {
+            let current = stack.last().unwrap();
+
+            let neighbors = current
+                .borrow()
+                .neighbors()
+                .into_iter()
+                .filter(|(row, column)| {
+                    let neighbor = grid.cell(*row, *column).unwrap();
+                    neighbor.borrow().links().is_empty()
+                })
+                .collect::<Vec<(i32, i32)>>();
+
+            if neighbors.is_empty() {
+                stack.pop();
+            } else {
+                let neighbor = random_neighbor(grid, neighbors);
+                current.borrow_mut().link(neighbor.clone());
+                stack.push(neighbor);
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_recursive_backtracker() {
+        let mut grid = crate::grids::grid::Grid::new(5, 5);
+
+        RecursiveBacktracker::on(&mut grid);
+
+        // Assert that all cells are linked
+        for cell in grid.iter() {
+            assert!(!cell.borrow().links().is_empty());
+        }
+    }
+}

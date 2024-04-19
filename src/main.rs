@@ -4,7 +4,7 @@ mod utils;
 
 use algorithms::{
     aldous_broder::AldousBroder, binary_tree::BinaryTree, hunt_and_kill::HuntAndKill,
-    sidewinder::Sidewinder, wilsons::Wilsons,
+    recursive_backtracker::RecursiveBacktracker, sidewinder::Sidewinder, wilsons::Wilsons,
 };
 use grids::{base_grid::BaseGrid, distance_grid::DistanceGrid, grid::Grid};
 
@@ -43,5 +43,10 @@ fn main() {
     println!("Hunt And Kill");
     let mut grid = Grid::new(6, 6);
     HuntAndKill::on(&mut grid);
+    println!("{}", grid.display());
+
+    println!("Recursive Backtracker");
+    let mut grid = Grid::new(6, 6);
+    RecursiveBacktracker::on(&mut grid);
     println!("{}", grid.display());
 }
