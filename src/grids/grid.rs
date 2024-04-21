@@ -1,5 +1,5 @@
 use super::{
-    base_grid::{BaseGrid, GridCell, GridIterator},
+    base_grid::{GridCell, GridIterator, WithDisplay, WithRowsAndColumns},
     cell::Cell,
     grid_display::GridDisplay,
 };
@@ -91,18 +91,9 @@ impl Grid {
     pub fn new_grid_cell(row: i32, column: i32) -> GridCell {
         Rc::new(RefCell::new(Cell::new(row, column)))
     }
-
-    /// Displays the grid.
-    ///
-    /// # Returns
-    ///
-    /// A `GridDisplay` instance for displaying the grid.
-    pub fn display(&self) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
-        GridDisplay::new(self, |_| String::from("   "))
-    }
 }
 
-impl BaseGrid for Grid {
+impl WithRowsAndColumns for Grid {
     /// Returns the number of rows in the grid.
     fn rows(&self) -> i32 {
         self.rows
@@ -148,6 +139,17 @@ impl BaseGrid for Grid {
     /// An iterator over the rows of the grid.
     fn each_row(&self) -> Iter<'_, Vec<GridCell>> {
         self.cells.iter()
+    }
+}
+
+impl WithDisplay for Grid {
+    /// Displays the grid.
+    ///
+    /// # Returns
+    ///
+    /// A `GridDisplay` instance for displaying the grid.
+    fn display(&mut self) -> GridDisplay {
+        GridDisplay::new(self, Box::new(|_| String::from("   ")))
     }
 }
 

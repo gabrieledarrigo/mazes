@@ -41,7 +41,7 @@ impl BinaryTree {
     ///
     /// In this example, a 5x5 grid is created and the binary tree algorithm is applied to it,
     /// generating a maze with a bias towards paths that go either north or east.
-    pub fn on(grid: &mut impl BaseGrid) {
+    pub fn on(grid: &mut dyn BaseGrid) {
         let mut rng = rand::thread_rng();
 
         for cell in grid.iter() {
@@ -72,7 +72,7 @@ impl BinaryTree {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::grids::grid::Grid;
+    use crate::grids::{base_grid::WithRowsAndColumns, grid::Grid};
 
     #[test]
     fn test_binary_tree_on() {

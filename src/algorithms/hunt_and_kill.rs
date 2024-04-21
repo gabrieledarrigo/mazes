@@ -9,7 +9,7 @@ impl HuntAndKill {
     /// # Arguments
     ///
     /// * `grid` - The grid on which to execute the algorithm.
-    pub fn on(grid: &impl BaseGrid) {
+    pub fn on(grid: &dyn BaseGrid) {
         let mut current = Some(random_cell(grid));
 
         while let Some(ref cell) = current {
@@ -58,7 +58,7 @@ impl HuntAndKill {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::grids::grid::Grid;
+    use crate::grids::{base_grid::WithRowsAndColumns, grid::Grid};
 
     #[test]
     fn test_hunt_and_kill() {

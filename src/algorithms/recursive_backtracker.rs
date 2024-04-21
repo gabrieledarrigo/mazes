@@ -12,7 +12,7 @@ impl RecursiveBacktracker {
     /// # Arguments
     ///
     /// * `grid` - The grid on which to execute the algorithm.
-    pub fn on(grid: &impl BaseGrid) {
+    pub fn on(grid: &dyn BaseGrid) {
         let cell = random_cell(grid);
 
         let mut stack: Vec<GridCell> = vec![];
@@ -44,6 +44,8 @@ impl RecursiveBacktracker {
 
 #[cfg(test)]
 mod tests {
+    use crate::grids::base_grid::WithRowsAndColumns;
+
     use super::*;
 
     #[test]

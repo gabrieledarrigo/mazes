@@ -1,4 +1,4 @@
-use super::base_grid::{BaseGrid, GridCell};
+use super::base_grid::{GridCell, WithRowsAndColumns};
 use std::collections::HashMap;
 
 /// Represents the maximum distance in a Grid from a root cell.
@@ -87,7 +87,7 @@ impl Distances {
     /// # Returns
     ///
     /// A mutable reference to `Self` (the `Distances` instance) after the calculation is complete.
-    pub fn calculate(&mut self, root: GridCell, grid: &impl BaseGrid) -> &mut Self {
+    pub fn calculate(&mut self, root: GridCell, grid: &impl WithRowsAndColumns) -> &mut Self {
         let mut frontier = vec![root];
 
         while !frontier.is_empty() {
@@ -128,7 +128,7 @@ impl Distances {
     /// # Returns
     ///
     /// A mutable reference to `Self` (the `Distances` instance) after the shortest path calculation is complete.
-    pub fn path_to(&mut self, goal: GridCell, grid: &impl BaseGrid) -> &mut Self {
+    pub fn path_to(&mut self, goal: GridCell, grid: &impl WithRowsAndColumns) -> &mut Self {
         let mut current: std::rc::Rc<std::cell::RefCell<super::cell::Cell>> = goal;
         let mut breadcrumbs = Distances::new(self.root);
 
@@ -195,7 +195,7 @@ impl Distances {
 mod tests {
     use super::super::grid::Grid;
     use super::Distances;
-    use crate::grids::base_grid::BaseGrid;
+    use crate::grids::base_grid::WithRowsAndColumns;
     use crate::BinaryTree;
     use std::collections::HashMap;
 

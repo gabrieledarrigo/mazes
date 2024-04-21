@@ -10,7 +10,7 @@ use rand::Rng;
 /// # Returns
 ///
 /// The randomly selected `GridCell`.
-pub fn random_cell(grid: &impl BaseGrid) -> GridCell {
+pub fn random_cell(grid: &dyn BaseGrid) -> GridCell {
     let mut rng = rand::thread_rng();
     let row = rng.gen_range(0..grid.rows());
     let column = rng.gen_range(0..grid.columns());
@@ -28,7 +28,7 @@ pub fn random_cell(grid: &impl BaseGrid) -> GridCell {
 /// # Returns
 ///
 /// The randomly selected neighbor `GridCell`.
-pub fn random_neighbor(grid: &impl BaseGrid, neighbors: Vec<(i32, i32)>) -> GridCell {
+pub fn random_neighbor(grid: &dyn BaseGrid, neighbors: Vec<(i32, i32)>) -> GridCell {
     let mut rng = rand::thread_rng();
 
     let index = rng.gen_range(0..neighbors.len());

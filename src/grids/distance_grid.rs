@@ -1,5 +1,5 @@
 use super::{
-    base_grid::{BaseGrid, GridCell, GridIterator},
+    base_grid::{GridCell, GridIterator, WithDisplay, WithRowsAndColumns},
     distances::Distances,
     grid::Grid,
     grid_display::GridDisplay,
@@ -30,24 +30,6 @@ impl DistanceGrid {
         }
     }
 
-    /// Displays the grid with the distances between cells.
-    ///
-    /// # Returns
-    ///
-    /// A `GridDisplay` instance that can be used to display the grid.
-    pub fn display(&mut self) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
-        let root = self.cell(0, 0).unwrap().to_owned();
-        self.distances.calculate(root, &self.grid);
-
-        GridDisplay::new(&self.grid, |cell: GridCell| {
-            let row = cell.borrow_mut().row();
-            let column = cell.borrow_mut().column();
-            let distance = self.distances.get((row, column)).unwrap_or(&0);
-
-            String::from(format!(" {:X} ", distance))
-        })
-    }
-
     /// Displays the grid with the path to the specified goal cell.
     ///
     /// # Arguments
@@ -57,29 +39,29 @@ impl DistanceGrid {
     /// # Returns
     ///
     /// A `GridDisplay` instance that can be used to display the grid.
-    pub fn display_path_to(
-        &mut self,
-        goal: GridCell,
-    ) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
+    pub fn display_path_to(&mut self, goal: GridCell) -> GridDisplay {
         let root = self.cell(0, 0).unwrap().to_owned();
         self.distances
             .calculate(root, &self.grid)
             .path_to(goal, &self.grid);
 
-        GridDisplay::new(&self.grid, |cell: GridCell| {
-            let row = cell.borrow_mut().row();
-            let column = cell.borrow_mut().column();
-            let distance = self.distances.get((row, column)).unwrap_or(&0);
+        GridDisplay::new(
+            &self.grid,
+            Box::new(|cell: GridCell| {
+                let row = cell.borrow_mut().row();
+                let column = cell.borrow_mut().column();
+                let distance = self.distances.get((row, column)).unwrap_or(&0);
 
-            String::from(format!(
-                " {} ",
-                if *distance > 0 {
-                    format!("{:X}", distance)
-                } else {
-                    " ".to_string()
-                }
-            ))
-        })
+                String::from(format!(
+                    " {} ",
+                    if *distance > 0 {
+                        format!("{:X}", distance)
+                    } else {
+                        " ".to_string()
+                    }
+                ))
+            }),
+        )
     }
 
     /// Displays the grid with colors based on the distances between cells.
@@ -87,31 +69,34 @@ impl DistanceGrid {
     /// # Returns
     ///
     /// A `GridDisplay` instance that can be used to display the grid.
-    pub fn display_with_color(&mut self) -> GridDisplay<'_, impl Fn(GridCell) -> String + '_> {
+    pub fn display_with_color(&mut self) -> GridDisplay {
         let root = self.cell(0, 0).unwrap().to_owned();
         self.distances.calculate(root, &self.grid);
 
-        GridDisplay::new(&self.grid, |cell: GridCell| {
-            let row = cell.borrow_mut().row();
-            let column = cell.borrow_mut().column();
-            let distance = self.distances.get((row, column)).unwrap_or(&0);
-            let max_distance = self.distances.max_distance().value();
+        GridDisplay::new(
+            &self.grid,
+            Box::new(|cell: GridCell| {
+                let row = cell.borrow_mut().row();
+                let column = cell.borrow_mut().column();
+                let distance = self.distances.get((row, column)).unwrap_or(&0);
+                let max_distance = self.distances.max_distance().value();
 
-            let intensity = f64::from(max_distance - distance) / f64::from(max_distance);
-            let dark = (255.0 * intensity).floor();
-            let bright = 128.0 + (127.0 * intensity).floor();
+                let intensity = f64::from(max_distance - distance) / f64::from(max_distance);
+                let dark = (255.0 * intensity).floor();
+                let bright = 128.0 + (127.0 * intensity).floor();
 
-            String::from(
-                format!(" {:X} ", distance)
-                    .as_str()
-                    .on_truecolor(dark as u8, dark as u8, bright as u8)
-                    .to_string(),
-            )
-        })
+                String::from(
+                    format!(" {:X} ", distance)
+                        .as_str()
+                        .on_truecolor(dark as u8, dark as u8, bright as u8)
+                        .to_string(),
+                )
+            }),
+        )
     }
 }
 
-impl BaseGrid for DistanceGrid {
+impl WithRowsAndColumns for DistanceGrid {
     fn rows(&self) -> i32 {
         self.grid.rows()
     }
@@ -130,6 +115,29 @@ impl BaseGrid for DistanceGrid {
 
     fn each_row(&self) -> std::slice::Iter<'_, Vec<GridCell>> {
         self.grid.each_row()
+    }
+}
+
+impl WithDisplay for DistanceGrid {
+    /// Displays the grid with the distances between cells.
+    ///
+    /// # Returns
+    ///
+    /// A `GridDisplay` instance that can be used to display the grid.
+    fn display(&mut self) -> GridDisplay {
+        let root = self.cell(0, 0).unwrap().to_owned();
+        self.distances.calculate(root, &self.grid);
+
+        GridDisplay::new(
+            &self.grid,
+            Box::new(|cell: GridCell| {
+                let row = cell.borrow_mut().row();
+                let column = cell.borrow_mut().column();
+                let distance = self.distances.get((row, column)).unwrap_or(&0);
+
+                String::from(format!(" {:X} ", distance))
+            }),
+        )
     }
 }
 

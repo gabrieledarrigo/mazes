@@ -1,20 +1,14 @@
 use super::{base_grid::GridCell, grid::Grid};
-use crate::grids::base_grid::BaseGrid;
+use crate::grids::base_grid::WithRowsAndColumns;
 use std::fmt::Display;
 
 /// A struct that holds a Grid and a function to format the content of a Cell.
-pub struct GridDisplay<'a, F>
-where
-    F: Fn(GridCell) -> String + 'a,
-{
+pub struct GridDisplay<'a> {
     grid: &'a Grid,
-    cell_content: F,
+    cell_content: Box<dyn Fn(GridCell) -> String + 'a>,
 }
 
-impl<'a, F> GridDisplay<'a, F>
-where
-    F: Fn(GridCell) -> String + 'a,
-{
+impl<'a> GridDisplay<'a> {
     /// Creates a new `GridDisplay` instance.
     ///
     /// # Arguments
@@ -25,15 +19,12 @@ where
     /// # Returns
     ///
     /// A new `GridDisplay` instance.
-    pub fn new(grid: &'a Grid, cell_content: F) -> Self {
+    pub fn new(grid: &'a Grid, cell_content: Box<dyn Fn(GridCell) -> String + 'a>) -> Self {
         Self { grid, cell_content }
     }
 }
 
-impl<'a, F> Display for GridDisplay<'a, F>
-where
-    F: Fn(GridCell) -> String + 'a,
-{
+impl<'a> Display for GridDisplay<'a> {
     /// Formats the `GridDisplay` instance for display.
     ///
     /// # Arguments
@@ -44,7 +35,7 @@ where
     ///
     /// A `std::fmt::Result` indicating the success or failure of the formatting operation.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let grid = self.grid as &dyn BaseGrid;
+        let grid = self.grid as &dyn WithRowsAndColumns;
 
         let mut output = String::from("+");
         output.push_str(&"---+".repeat(grid.columns() as usize));

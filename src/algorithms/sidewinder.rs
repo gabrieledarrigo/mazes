@@ -21,7 +21,7 @@ use rand::Rng;
 pub struct Sidewinder {}
 
 impl Sidewinder {
-    pub fn on(grid: &mut impl BaseGrid) {
+    pub fn on(grid: &dyn BaseGrid) {
         let mut rng = rand::thread_rng();
 
         for row in grid.each_row() {

@@ -9,7 +9,7 @@ impl AldousBroder {
     /// # Arguments
     ///
     /// * `grid` - The grid on which to generate the maze.
-    pub fn on(grid: &impl BaseGrid) {
+    pub fn on(grid: &dyn BaseGrid) {
         let mut cell = random_cell(grid);
         let mut unvisited = (grid.rows() * grid.columns()) - 1;
 
@@ -29,7 +29,7 @@ impl AldousBroder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::grids::grid::Grid;
+    use crate::grids::{base_grid::WithRowsAndColumns, grid::Grid};
 
     #[test]
     fn test_aldoous_broder() {

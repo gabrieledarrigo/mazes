@@ -1,10 +1,10 @@
-use super::cell::Cell;
+use super::{cell::Cell, grid_display::GridDisplay};
 use std::{cell::RefCell, iter::Flatten, rc::Rc, slice::Iter};
 
 pub type GridCell = Rc<RefCell<Cell>>;
 
-/// The `BaseGrid` trait represents a grid structure.
-pub trait BaseGrid {
+/// The `WithRowsAndColumns` trait represents a grid structure with rows and columns.
+pub trait WithRowsAndColumns {
     /// Returns the number of rows in the grid.
     fn rows(&self) -> i32;
 
@@ -29,6 +29,22 @@ pub trait BaseGrid {
     /// Returns an iterator over each row of the grid.
     fn each_row(&self) -> Iter<'_, Vec<GridCell>>;
 }
+
+/// The `WithDisplay` trait represents a grid structure with display capabilities.
+pub trait WithDisplay {
+    /// Returns a display representation of the grid.
+    ///
+    /// # Returns
+    ///
+    /// A `GridDisplay` instance that can be used to display the grid.
+    fn display(&mut self) -> GridDisplay;
+}
+
+/// The `BaseGrid` trait represents a grid structure with rows, columns, and display capabilities.
+pub trait BaseGrid: WithRowsAndColumns + WithDisplay {}
+
+/// Implement the `BaseGrid` trait for any type that implements `WithRowsAndColumns` and `WithDisplay`.
+impl<T> BaseGrid for T where T: WithRowsAndColumns + WithDisplay {}
 
 /// An iterator over the cells of a grid.
 pub struct GridIterator<'a> {
