@@ -1,3 +1,4 @@
+use super::On;
 use crate::{grids::base_grid::BaseGrid, utils::utils::*};
 use rand::Rng;
 
@@ -5,12 +6,18 @@ use rand::Rng;
 pub struct Wilsons {}
 
 impl Wilsons {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl On for Wilsons {
     /// Generates a maze using the Wilson's algorithm on the given grid.
     ///
     /// # Arguments
     ///
     /// * `grid` - The grid on which to generate the maze.
-    pub fn on(grid: &dyn BaseGrid) {
+    fn on(&self, grid: &mut dyn BaseGrid) {
         let mut unvisited = vec![];
 
         for cell in grid.iter() {
@@ -59,8 +66,10 @@ mod tests {
 
     #[test]
     fn test_wilsons_on() {
-        let grid = Grid::new(3, 3);
-        Wilsons::on(&grid);
+        let mut grid = Grid::new(3, 3);
+        let wilsons = Wilsons::new();
+
+        wilsons.on(&mut grid);
 
         // Assert that all cells are linked
         for cell in grid.iter() {

@@ -1,15 +1,22 @@
+use super::On;
 use crate::{grids::base_grid::BaseGrid, utils::utils::*};
 
 /// The Aldous-Broder algorithm for generating a maze.
 pub struct AldousBroder {}
 
 impl AldousBroder {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl On for AldousBroder {
     /// Generates a maze using the Aldous-Broder algorithm on the given grid.
     ///
     /// # Arguments
     ///
     /// * `grid` - The grid on which to generate the maze.
-    pub fn on(grid: &dyn BaseGrid) {
+    fn on(&self, grid: &mut dyn BaseGrid) {
         let mut cell = random_cell(grid);
         let mut unvisited = (grid.rows() * grid.columns()) - 1;
 
@@ -34,8 +41,9 @@ mod tests {
     #[test]
     fn test_aldoous_broder() {
         let mut grid = Grid::new(5, 5);
+        let aldous_broder = AldousBroder::new();
 
-        AldousBroder::on(&mut grid);
+        aldous_broder.on(&mut grid);
 
         assert_eq!(grid.rows(), 5);
         assert_eq!(grid.columns(), 5);

@@ -1,15 +1,22 @@
+use super::On;
 use crate::{grids::base_grid::BaseGrid, utils::utils::*};
 
 /// The `HuntAndKill` struct represents the Hunt and Kill algorithm for generating mazes.
 pub struct HuntAndKill {}
 
 impl HuntAndKill {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl On for HuntAndKill {
     /// Executes the Hunt and Kill algorithm on the given grid.
     ///
     /// # Arguments
     ///
     /// * `grid` - The grid on which to execute the algorithm.
-    pub fn on(grid: &dyn BaseGrid) {
+    fn on(&self, grid: &mut dyn BaseGrid) {
         let mut current = Some(random_cell(grid));
 
         while let Some(ref cell) = current {
@@ -63,8 +70,9 @@ mod tests {
     #[test]
     fn test_hunt_and_kill() {
         let mut grid = Grid::new(5, 5);
+        let hunt_and_kill = HuntAndKill::new();
 
-        HuntAndKill::on(&mut grid);
+        hunt_and_kill.on(&mut grid);
 
         // Assert that all cells are linked
         for cell in grid.iter() {

@@ -1,3 +1,4 @@
+use super::On;
 use crate::{
     grids::base_grid::{BaseGrid, GridCell},
     utils::utils::{random_cell, random_neighbor},
@@ -7,12 +8,18 @@ use crate::{
 pub struct RecursiveBacktracker {}
 
 impl RecursiveBacktracker {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl On for RecursiveBacktracker {
     /// Executes the recursive backtracking algorithm on the given grid.
     ///
     /// # Arguments
     ///
     /// * `grid` - The grid on which to execute the algorithm.
-    pub fn on(grid: &dyn BaseGrid) {
+    fn on(&self, grid: &mut dyn BaseGrid) {
         let cell = random_cell(grid);
 
         let mut stack: Vec<GridCell> = vec![];
@@ -51,8 +58,9 @@ mod tests {
     #[test]
     fn test_recursive_backtracker() {
         let mut grid = crate::grids::grid::Grid::new(5, 5);
+        let recursive_backtracker = RecursiveBacktracker::new();
 
-        RecursiveBacktracker::on(&mut grid);
+        recursive_backtracker.on(&mut grid);
 
         // Assert that all cells are linked
         for cell in grid.iter() {

@@ -1,3 +1,4 @@
+use super::On;
 use crate::grids::base_grid::BaseGrid;
 use rand::Rng;
 
@@ -21,7 +22,13 @@ use rand::Rng;
 pub struct Sidewinder {}
 
 impl Sidewinder {
-    pub fn on(grid: &dyn BaseGrid) {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl On for Sidewinder {
+    fn on(&self, grid: &mut dyn BaseGrid) {
         let mut rng = rand::thread_rng();
 
         for row in grid.each_row() {

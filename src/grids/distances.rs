@@ -195,6 +195,7 @@ impl Distances {
 mod tests {
     use super::super::grid::Grid;
     use super::Distances;
+    use crate::algorithms::On;
     use crate::grids::base_grid::WithRowsAndColumns;
     use crate::BinaryTree;
     use std::collections::HashMap;
@@ -221,7 +222,8 @@ mod tests {
     #[test]
     fn test_calculate() {
         let mut grid = Grid::new(3, 3);
-        BinaryTree::on(&mut grid);
+        let binary_tree = BinaryTree::new();
+        binary_tree.on(&mut grid);
 
         let root = grid.cell(0, 0).unwrap();
         let mut distances = Distances::new((0, 0));
@@ -239,7 +241,8 @@ mod tests {
     #[test]
     fn test_path_to() {
         let mut grid = Grid::new(3, 3);
-        BinaryTree::on(&mut grid);
+        let binary_tree = BinaryTree::new();
+        binary_tree.on(&mut grid);
 
         let root = grid.cell(0, 0).unwrap().clone();
         let goal = grid.cell(2, 2).unwrap().clone();

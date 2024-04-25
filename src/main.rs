@@ -5,48 +5,57 @@ mod utils;
 use algorithms::{
     aldous_broder::AldousBroder, binary_tree::BinaryTree, hunt_and_kill::HuntAndKill,
     recursive_backtracker::RecursiveBacktracker, sidewinder::Sidewinder, wilsons::Wilsons,
+    Algorithms, Apply,
 };
 use grids::{base_grid::BaseGrid, distance_grid::DistanceGrid, grid::Grid};
+use inquire::Select;
+use std::fmt::Display;
+
+#[derive(PartialEq)]
+enum YesNo {
+    Yes,
+    No,
+}
+
+impl Display for YesNo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            YesNo::Yes => write!(f, "Yes"),
+            YesNo::No => write!(f, "No"),
+        }
+    }
+}
 
 fn main() {
-    println!("Binary tree");
-    let mut grid = Grid::new(6, 6);
-    BinaryTree::on(&mut grid);
-    println!("{}", grid.display());
+    let algorithms = vec![
+        Algorithms::BinaryTree(BinaryTree::new()),
+        Algorithms::Sidewinder(Sidewinder::new()),
+        Algorithms::AldousBroder(AldousBroder::new()),
+        Algorithms::Wilsons(Wilsons::new()),
+        Algorithms::HuntAndKill(HuntAndKill::new()),
+        Algorithms::RecursiveBacktracker(RecursiveBacktracker::new()),
+    ];
 
-    println!("Sidewinder");
-    let mut grid = Grid::new(6, 6);
-    Sidewinder::on(&mut grid);
-    println!("{}", grid.display());
+    let algorithm = Select::new(
+        "Please choose an algorithm to generate the maze:",
+        algorithms,
+    )
+    .prompt()
+    .unwrap();
 
-    println!("With distances");
-    let mut grid = DistanceGrid::new(6, 6);
-    BinaryTree::on(&mut grid);
-    println!("{}", grid.display());
+    let with_distance = Select::new(
+        "Would you like to show the distance from the north west cell?",
+        vec![YesNo::Yes, YesNo::No],
+    )
+    .prompt()
+    .unwrap();
 
-    println!("With path from north west to south east");
-    println!("{}", grid.display_path_to(grid.cell(5, 0).unwrap().clone()));
+    let mut grid: Box<dyn BaseGrid> = if with_distance == YesNo::Yes {
+        Box::new(DistanceGrid::new(6, 6))
+    } else {
+        Box::new(Grid::new(6, 6))
+    };
 
-    println!("With colors");
-    println!("{}", grid.display_with_color());
-
-    println!("Aldous Brother");
-    let mut grid = DistanceGrid::new(6, 6);
-    AldousBroder::on(&mut grid);
-    println!("{}", grid.display_with_color());
-
-    println!("Wilsons");
-    let mut grid = Grid::new(6, 6);
-    Wilsons::on(&mut grid);
-    println!("{}", grid.display());
-
-    println!("Hunt And Kill");
-    let mut grid = Grid::new(6, 6);
-    HuntAndKill::on(&mut grid);
-    println!("{}", grid.display());
-
-    println!("Recursive Backtracker");
-    let mut grid = Grid::new(6, 6);
-    RecursiveBacktracker::on(&mut grid);
-    println!("{}", grid.display());
+    algorithm.apply(&mut *grid);
+    println!("{}", (grid).display());
 }

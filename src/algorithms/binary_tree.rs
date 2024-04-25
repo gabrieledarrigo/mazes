@@ -1,6 +1,6 @@
-use rand::Rng;
-
+use super::On;
 use crate::grids::base_grid::BaseGrid;
+use rand::Rng;
 
 /// Implements the binary tree algorithm for generating mazes.
 ///
@@ -23,6 +23,12 @@ use crate::grids::base_grid::BaseGrid;
 pub struct BinaryTree {}
 
 impl BinaryTree {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl On for BinaryTree {
     /// Applies the binary tree algorithm to the given grid.
     ///
     /// # Arguments
@@ -41,7 +47,7 @@ impl BinaryTree {
     ///
     /// In this example, a 5x5 grid is created and the binary tree algorithm is applied to it,
     /// generating a maze with a bias towards paths that go either north or east.
-    pub fn on(grid: &mut dyn BaseGrid) {
+    fn on(&self, grid: &mut dyn BaseGrid) {
         let mut rng = rand::thread_rng();
 
         for cell in grid.iter() {
@@ -77,8 +83,9 @@ mod tests {
     #[test]
     fn test_binary_tree_on() {
         let mut grid = Grid::new(3, 3);
+        let binary_tree = BinaryTree::new();
 
-        BinaryTree::on(&mut grid);
+        binary_tree.on(&mut grid);
 
         // Verify that each cell is linked to either its north or east neighbor
         for cell in grid.iter() {
