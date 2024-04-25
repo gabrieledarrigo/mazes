@@ -8,25 +8,12 @@ use algorithms::{
     Algorithms, Apply,
 };
 use grids::{base_grid::BaseGrid, distance_grid::DistanceGrid, grid::Grid};
-use inquire::Select;
-use std::fmt::Display;
+use inquire::{validator::Validation, Confirm, CustomType, Select};
 
-#[derive(PartialEq)]
-enum YesNo {
-    Yes,
-    No,
-}
+pub const MIN_GRID_WIDTH: i32 = 3;
+pub const MAX_GRID_WIDTH: i32 = 12;
 
-impl Display for YesNo {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            YesNo::Yes => write!(f, "Yes"),
-            YesNo::No => write!(f, "No"),
-        }
-    }
-}
-
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let algorithms = vec![
         Algorithms::BinaryTree(BinaryTree::new()),
         Algorithms::Sidewinder(Sidewinder::new()),
@@ -40,22 +27,43 @@ fn main() {
         "Please choose an algorithm to generate the maze:",
         algorithms,
     )
-    .prompt()
-    .unwrap();
+    .prompt()?;
 
-    let with_distance = Select::new(
-        "Would you like to show the distance from the north west cell?",
-        vec![YesNo::Yes, YesNo::No],
-    )
-    .prompt()
-    .unwrap();
+    let width: i32 = CustomType::new("Please choose the width of the grid:")
+        .with_validator(|input: &i32| {
+            if *input < MIN_GRID_WIDTH {
+                return Ok(Validation::Invalid(
+                    format!("Please enter a number greater than {}", MIN_GRID_WIDTH).into(),
+                ));
+            }
 
-    let mut grid: Box<dyn BaseGrid> = if with_distance == YesNo::Yes {
-        Box::new(DistanceGrid::new(6, 6))
+            if *input > MAX_GRID_WIDTH {
+                return Ok(Validation::Invalid(
+                    format!("Please enter a number lower than {}", MAX_GRID_WIDTH).into(),
+                ));
+            }
+
+            Ok(Validation::Valid)
+        })
+        .with_help_message(
+            format!(
+                "Please enter a number between {} and {}",
+                MIN_GRID_WIDTH, MAX_GRID_WIDTH
+            )
+            .as_str(),
+        )
+        .prompt()?;
+
+    let with_distance =
+        Confirm::new("Would you like to show the distance from the north west cell?").prompt()?;
+
+    let mut grid: Box<dyn BaseGrid> = if with_distance {
+        Box::new(DistanceGrid::new(width, width))
     } else {
-        Box::new(Grid::new(6, 6))
+        Box::new(Grid::new(width, width))
     };
 
     algorithm.apply(&mut *grid);
-    println!("{}", (grid).display());
+    println!("\n\n{}", (grid).display());
+    Ok(())
 }
