@@ -10,7 +10,7 @@ use algorithms::{
 use grids::{base_grid::BaseGrid, distance_grid::DistanceGrid, grid::Grid};
 use inquire::{validator::Validation, Confirm, CustomType, Select};
 
-pub const MIN_GRID_WIDTH: i32 = 3;
+pub const MIN_GRID_WIDTH: i32 = 5;
 pub const MAX_GRID_WIDTH: i32 = 11;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -55,7 +55,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .prompt()?;
 
     let with_distance =
-        Confirm::new("Would you like to show the distance from the north west cell?").prompt()?;
+        Confirm::new("Would you like to show the distance from the north west cell?")
+            .with_default(false)
+            .prompt()?;
 
     let mut grid: Box<dyn BaseGrid> = if with_distance {
         Box::new(DistanceGrid::new(width, width))
