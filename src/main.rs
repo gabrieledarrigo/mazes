@@ -11,7 +11,7 @@ use grids::{base_grid::BaseGrid, distance_grid::DistanceGrid, grid::Grid};
 use inquire::{validator::Validation, Confirm, CustomType, Select};
 
 pub const MIN_GRID_WIDTH: i32 = 3;
-pub const MAX_GRID_WIDTH: i32 = 12;
+pub const MAX_GRID_WIDTH: i32 = 11;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let algorithms = vec![

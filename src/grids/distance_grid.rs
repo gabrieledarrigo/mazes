@@ -5,6 +5,7 @@ use super::{
     grid_display::GridDisplay,
 };
 use colored::Colorize;
+use radix_fmt::radix_36;
 
 /// Represents a grid with distances between cells.
 pub struct DistanceGrid {
@@ -135,7 +136,7 @@ impl WithDisplay for DistanceGrid {
                 let column = cell.borrow_mut().column();
                 let distance = self.distances.get((row, column)).unwrap_or(&0);
 
-                String::from(format!(" {:X} ", distance))
+                String::from(format!(" {:#} ", radix_36(*distance)))
             }),
         )
     }
