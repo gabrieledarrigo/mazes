@@ -38,6 +38,8 @@ pub trait WithDisplay {
     ///
     /// A `GridDisplay` instance that can be used to display the grid.
     fn display(&mut self) -> GridDisplay;
+
+    fn display_with_color(&mut self) -> GridDisplay;
 }
 
 /// The `BaseGrid` trait represents a grid structure with rows, columns, and display capabilities.

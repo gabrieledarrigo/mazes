@@ -145,11 +145,25 @@ impl WithRowsAndColumns for Grid {
 impl WithDisplay for Grid {
     /// Displays the grid.
     ///
+    /// This method returns a `GridDisplay` instance that can be used to display the grid.
+    ///
     /// # Returns
     ///
     /// A `GridDisplay` instance for displaying the grid.
     fn display(&mut self) -> GridDisplay {
         GridDisplay::new(self, Box::new(|_| String::from("   ")))
+    }
+
+    /// Displays the grid.
+    ///
+    /// On the Grid structure, display_with_color doesn't render any color, and simply displays the grid.
+    /// It internally calls the `display` method to obtain the grid representation.
+    ///
+    /// # Returns
+    ///
+    /// A `GridDisplay` instance for displaying the grid.
+    fn display_with_color(&mut self) -> GridDisplay {
+        self.display()
     }
 }
 

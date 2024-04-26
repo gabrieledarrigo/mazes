@@ -59,6 +59,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .with_default(false)
             .prompt()?;
 
+    let with_colors = if with_distance {
+        Confirm::new("Would you like to show the distance with colors?")
+            .with_default(false)
+            .prompt()?
+    } else {
+        false
+    };
+
     let mut grid: Box<dyn BaseGrid> = if with_distance {
         Box::new(DistanceGrid::new(width, width))
     } else {
@@ -66,6 +74,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     algorithm.apply(&mut *grid);
-    println!("\n\n{}", (grid).display());
+
+    if with_colors {
+        println!("\n\n{}", grid.display_with_color());
+    } else {
+        println!("\n\n{}", grid.display());
+    }
+
     Ok(())
 }
