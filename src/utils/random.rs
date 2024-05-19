@@ -28,7 +28,7 @@ pub fn random_cell(grid: &dyn BaseGrid) -> GridCell {
 /// # Returns
 ///
 /// The randomly selected neighbor `GridCell`.
-pub fn random_neighbor(grid: &dyn BaseGrid, neighbors: Vec<(i32, i32)>) -> GridCell {
+pub fn random_neighbor(grid: &dyn BaseGrid, neighbors: &Vec<(i32, i32)>) -> GridCell {
     let mut rng = rand::thread_rng();
 
     let index = rng.gen_range(0..neighbors.len());

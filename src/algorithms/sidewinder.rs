@@ -42,7 +42,7 @@ impl On for Sidewinder {
                     let at_eastern_boundary = cell.east().is_none();
                     let at_northern_boundary = cell.north().is_none();
 
-                    at_eastern_boundary || at_northern_boundary == false && rng.gen_bool(0.5)
+                    at_eastern_boundary || !at_northern_boundary && rng.gen_bool(0.5)
                 };
 
                 if should_close {

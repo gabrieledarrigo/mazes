@@ -39,7 +39,7 @@ impl<'a> Display for GridDisplay<'a> {
 
         let mut output = String::from("+");
         output.push_str(&"---+".repeat(grid.columns() as usize));
-        output.push_str(&"\n");
+        output.push('\n');
 
         for row in 0..grid.rows() {
             let mut top = String::from("|");
@@ -79,6 +79,6 @@ impl<'a> Display for GridDisplay<'a> {
             output.push_str(&bottom);
         }
 
-        write!(f, "{}", output)
+        write!(f, "{output}")
     }
 }

@@ -1,5 +1,8 @@
 use super::On;
-use crate::{grids::base_grid::BaseGrid, utils::utils::*};
+use crate::{
+    grids::base_grid::BaseGrid,
+    utils::random::{random_cell, random_neighbor},
+};
 use rand::Rng;
 
 /// The Wilsons struct represents the Wilson's algorithm for generating mazes.
@@ -35,7 +38,7 @@ impl On for Wilsons {
             path.push(cell.clone());
 
             while unvisited.contains(&&cell) {
-                cell = random_neighbor(grid, cell.clone().borrow().neighbors());
+                cell = random_neighbor(grid, &cell.clone().borrow().neighbors());
 
                 let position = path.iter().position(|c| {
                     c.borrow().to_row_and_column() == cell.borrow().to_row_and_column()
@@ -73,7 +76,7 @@ mod tests {
 
         // Assert that all cells are linked
         for cell in grid.iter() {
-            assert!(cell.borrow().links().len() > 0);
+            assert!(!cell.borrow().links().is_empty());
         }
     }
 }

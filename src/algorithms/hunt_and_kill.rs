@@ -1,5 +1,8 @@
 use super::On;
-use crate::{grids::base_grid::BaseGrid, utils::utils::*};
+use crate::{
+    grids::base_grid::BaseGrid,
+    utils::random::{random_cell, random_neighbor},
+};
 
 /// The `HuntAndKill` struct represents the Hunt and Kill algorithm for generating mazes.
 pub struct HuntAndKill {}
@@ -32,7 +35,7 @@ impl On for HuntAndKill {
                 .collect::<Vec<(i32, i32)>>();
 
             if !unvisited.is_empty() {
-                let neighbor = random_neighbor(grid, unvisited);
+                let neighbor = random_neighbor(grid, &unvisited);
                 cell.borrow_mut().link(neighbor.clone());
                 current = Some(neighbor);
             } else {
@@ -45,14 +48,14 @@ impl On for HuntAndKill {
                         .iter()
                         .filter(|(row, column)| {
                             let neighbor = grid.cell(*row, *column).unwrap();
-                            neighbor.borrow().links().is_empty() == false
+                            !neighbor.borrow().links().is_empty()
                         })
                         .map(|&(row, column)| (row, column))
                         .collect::<Vec<(i32, i32)>>();
 
                     if cell.borrow().links().is_empty() && !visited.is_empty() {
                         current = Some(cell.clone());
-                        let neighbor = random_neighbor(grid, visited);
+                        let neighbor = random_neighbor(grid, &visited);
                         cell.borrow_mut().link(neighbor.clone());
                         break;
                     }

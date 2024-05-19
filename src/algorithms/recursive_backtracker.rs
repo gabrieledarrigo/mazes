@@ -1,10 +1,10 @@
 use super::On;
 use crate::{
     grids::base_grid::{BaseGrid, GridCell},
-    utils::utils::{random_cell, random_neighbor},
+    utils::random::{random_cell, random_neighbor},
 };
 
-/// The RecursiveBacktracker struct represents the recursive backtracking algorithm.
+/// The `RecursiveBacktracker` struct represents the recursive backtracking algorithm.
 pub struct RecursiveBacktracker {}
 
 impl RecursiveBacktracker {
@@ -41,7 +41,7 @@ impl On for RecursiveBacktracker {
             if neighbors.is_empty() {
                 stack.pop();
             } else {
-                let neighbor = random_neighbor(grid, neighbors);
+                let neighbor = random_neighbor(grid, &neighbors);
                 current.borrow_mut().link(neighbor.clone());
                 stack.push(neighbor);
             }

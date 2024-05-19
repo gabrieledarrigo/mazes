@@ -1,5 +1,8 @@
 use super::On;
-use crate::{grids::base_grid::BaseGrid, utils::utils::*};
+use crate::{
+    grids::base_grid::BaseGrid,
+    utils::random::{random_cell, random_neighbor},
+};
 
 /// The Aldous-Broder algorithm for generating a maze.
 pub struct AldousBroder {}
@@ -21,7 +24,7 @@ impl On for AldousBroder {
         let mut unvisited = (grid.rows() * grid.columns()) - 1;
 
         while unvisited > 0 {
-            let neighbor = random_neighbor(grid, cell.borrow().neighbors());
+            let neighbor = random_neighbor(grid, &cell.borrow().neighbors());
 
             if neighbor.borrow_mut().links().is_empty() {
                 cell.borrow_mut().link(neighbor.clone());

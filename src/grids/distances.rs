@@ -107,7 +107,7 @@ impl Distances {
                         self.set(*linked, *distance + 1);
 
                         let new_cell = grid.cell(linked.0, linked.1).unwrap();
-                        new_frontier.push(new_cell.to_owned())
+                        new_frontier.push(new_cell.to_owned());
                     }
                 }
             }
@@ -144,7 +144,7 @@ impl Distances {
             if let Some(distance) = self.get(current_cell) {
                 let mut next_current = None;
 
-                for (neighbour, _) in current.borrow().links() {
+                for neighbour in current.borrow().links().keys() {
                     if let Some(neighbour_distance) = self.get(*neighbour) {
                         if *neighbour_distance < *distance {
                             breadcrumbs.set(*neighbour, *neighbour_distance);

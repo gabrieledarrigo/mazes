@@ -53,14 +53,14 @@ impl DistanceGrid {
                 let column = cell.borrow_mut().column();
                 let distance = self.distances.get((row, column)).unwrap_or(&0);
 
-                String::from(format!(
+                format!(
                     " {} ",
                     if *distance > 0 {
-                        format!("{:X}", distance)
+                        format!("{distance:X}")
                     } else {
                         " ".to_string()
                     }
-                ))
+                )
             }),
         )
     }
@@ -105,7 +105,7 @@ impl WithDisplay for DistanceGrid {
                 let column = cell.borrow_mut().column();
                 let distance = self.distances.get((row, column)).unwrap_or(&0);
 
-                String::from(format!(" {:#} ", radix_36(*distance)))
+                format!(" {:#} ", radix_36(*distance))
             }),
         )
     }
@@ -131,12 +131,10 @@ impl WithDisplay for DistanceGrid {
                 let dark = (255.0 * intensity).floor();
                 let bright = 128.0 + (127.0 * intensity).floor();
 
-                String::from(
-                    format!(" {:#} ", radix_36(*distance))
-                        .as_str()
-                        .on_truecolor(dark as u8, dark as u8, bright as u8)
-                        .to_string(),
-                )
+                format!(" {:#} ", radix_36(*distance))
+                    .as_str()
+                    .on_truecolor(dark as u8, dark as u8, bright as u8)
+                    .to_string()
             }),
         )
     }
@@ -164,11 +162,7 @@ mod tests {
         let display = distance_grid.display();
 
         assert_eq!(
-            display
-                .to_string()
-                .replace(" ", "")
-                .replace("\n", "")
-                .trim(),
+            display.to_string().replace([' ', '\n'], "").trim(),
             "+---+---+---+
              | 0 | 0 | 0 |
              +---+---+---+
@@ -176,8 +170,7 @@ mod tests {
              +---+---+---+
              | 0 | 0 | 0 |
              +---+---+---+"
-                .replace(" ", "")
-                .replace("\n", "")
+                .replace([' ', '\n'], "")
                 .trim(),
         );
     }

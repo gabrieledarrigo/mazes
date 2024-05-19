@@ -49,7 +49,7 @@ impl Grid {
 
         for row in 0..rows {
             for column in 0..columns {
-                cells[row as usize][column as usize] = Self::new_grid_cell(row, column)
+                cells[row as usize][column as usize] = Self::new_grid_cell(row, column);
             }
         }
 
@@ -115,8 +115,7 @@ impl WithRowsAndColumns for Grid {
     ///
     /// An optional reference to the cell at the specified position.
     fn cell(&self, row: i32, column: i32) -> Option<&GridCell> {
-        if (row >= 0 && row < self.rows) == false || (column >= 0 && column < self.columns) == false
-        {
+        if !(row >= 0 && row < self.rows && column >= 0 && column < self.columns) {
             return None;
         }
 
@@ -127,7 +126,7 @@ impl WithRowsAndColumns for Grid {
     ///
     /// # Returns
     ///
-    /// A GridMutIterator struct
+    /// A `GridMutIterator` struct
     fn iter(&self) -> GridIterator {
         GridIterator::new(self.cells.iter().flatten())
     }
@@ -156,7 +155,7 @@ impl WithDisplay for Grid {
 
     /// Displays the grid.
     ///
-    /// On the Grid structure, display_with_color doesn't render any color, and simply displays the grid.
+    /// On the Grid structure, `display_with_color` doesn't render any color, and simply displays the grid.
     /// It internally calls the `display` method to obtain the grid representation.
     ///
     /// # Returns

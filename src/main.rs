@@ -1,4 +1,4 @@
-#![allow(dead_code)]
+#![allow(dead_code, clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 mod algorithms;
 mod grids;
 mod utils;
@@ -34,24 +34,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_validator(|input: &i32| {
             if *input < MIN_GRID_WIDTH {
                 return Ok(Validation::Invalid(
-                    format!("Please enter a number greater than {}", MIN_GRID_WIDTH).into(),
+                    format!("Please enter a number greater than {MIN_GRID_WIDTH}").into(),
                 ));
             }
 
             if *input > MAX_GRID_WIDTH {
                 return Ok(Validation::Invalid(
-                    format!("Please enter a number lower than {}", MAX_GRID_WIDTH).into(),
+                    format!("Please enter a number lower than {MAX_GRID_WIDTH}").into(),
                 ));
             }
 
             Ok(Validation::Valid)
         })
         .with_help_message(
-            format!(
-                "Please enter a number between {} and {}",
-                MIN_GRID_WIDTH, MAX_GRID_WIDTH
-            )
-            .as_str(),
+            format!("Please enter a number between {MIN_GRID_WIDTH} and {MAX_GRID_WIDTH}",)
+                .as_str(),
         )
         .prompt()?;
 
