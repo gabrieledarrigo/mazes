@@ -9,10 +9,13 @@ A Rust version of Jamis Buck's "[Mazes for Programmer](http://www.mazesforprogra
 To run the application, clone the repository and run the following command:
 
 ```shell
-cargo run
+$ cargo run
 ```
 
-The application will prompt you to choose the algorithm to generate the maze, the size of the grid if you want to display the distances from the northwest corner, and if you want to display the maze with colours.
+The application will show an interactive prompt to choose: the algorithm to generate the maze, the size of the grid, if you want to display the distances from the northwest corner, and if you want to display the maze with colours.
+
+![example](https://github.com/gabrieledarrigo/mazes/assets/1985555/ce2b1192-ba41-4fb7-b401-1b2ca54bdc11)
+
 
 ## Algorithms
 
